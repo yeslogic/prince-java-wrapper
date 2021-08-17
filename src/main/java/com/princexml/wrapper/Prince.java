@@ -6,12 +6,12 @@
 package com.princexml.wrapper;
 
 import com.princexml.wrapper.enums.*;
+import com.princexml.wrapper.events.MessageType;
 import com.princexml.wrapper.events.PrinceEvents;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static com.princexml.wrapper.CommandLine.*;
 
@@ -130,8 +130,88 @@ public class Prince {
         this.events = events;
     }
 
+    public boolean convert(String xmlPath) throws IOException {
+        return convertInternal(Collections.singletonList(xmlPath), null);
+    }
+
+    public boolean convert(String xmlPath, String pdfPath) throws IOException {
+        return convertInternal(Collections.singletonList(xmlPath), pdfPath);
+    }
+
+    public boolean convert(List<String> xmlPaths, String pdfPath) throws IOException {
+        return convertInternal(xmlPaths, pdfPath);
+    }
+
+    private boolean convertInternal(List<String> xmlPaths, String pdfPath) throws IOException {
+        List<String> cmdLine = getJobCommandLine("normal");
+        cmdLine.addAll(xmlPaths);
+        if (pdfPath != null) {
+            cmdLine.add(toCommand("output", pdfPath));
+        }
+
+        Process process = Util.invokeProcess(cmdLine);
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean convert(String xmlPath, OutputStream out) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add(xmlPath);
+        cmdLine.add(toCommand("output", "-"));
+
+        Process process = Util.invokeProcess(cmdLine);
+        InputStream fromPrince = process.getInputStream();
+
+        Util.copyInputToOutput(fromPrince, out);
+        fromPrince.close();
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean convert(InputStream in, OutputStream out) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add("-");
+
+        Process process = Util.invokeProcess(cmdLine);
+        OutputStream toPrince = process.getOutputStream();
+        InputStream fromPrince = process.getInputStream();
+
+        Util.copyInputToOutput(in, toPrince);
+        toPrince.close();
+
+        Util.copyInputToOutput(fromPrince, out);
+        fromPrince.close();
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean convertString(String xml, String pdfPath) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add(toCommand("output", pdfPath));
+        cmdLine.add("-");
+
+        Process process = Util.invokeProcess(cmdLine);
+        OutputStream toPrince = process.getOutputStream();
+
+        toPrince.write(xml.getBytes(StandardCharsets.UTF_8));
+        toPrince.close();
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean convertString(String xml, OutputStream out) throws IOException {
+        InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+
+        boolean result = convert(in, out);
+        in.close();
+
+        return result;
+    }
+
     protected List<String> getBaseCommandLine() {
         List<String> cmdLine = new ArrayList<>();
+
+        cmdLine.add(princePath);
 
         if (verbose) { cmdLine.add(toCommand("verbose")); }
         if (debug) { cmdLine.add(toCommand("debug")); }
@@ -165,8 +245,10 @@ public class Prince {
         return cmdLine;
     }
 
-    private List<String> getJobCommandLine() {
-        List<String> cmdLine = new ArrayList<>();
+    private List<String> getJobCommandLine(String logType) {
+        List<String> cmdLine = getBaseCommandLine();
+
+        cmdLine.add(toCommand("structured-log", logType));
 
         if (inputType != null) { cmdLine.add(toCommand("input", inputType)); }
         if (baseUrl != null) { cmdLine.add(toCommand("baseurl", baseUrl)); }
@@ -232,6 +314,45 @@ public class Prince {
         options.forEach((k, v) -> cmdLine.add(toCommand(k, v)));
 
         return cmdLine;
+    }
+
+    private boolean readMessagesFromStderr(Process process) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        return readMessages(reader);
+    }
+
+    protected boolean readMessages(BufferedReader reader) throws IOException {
+        String result = "";
+        String line = reader.readLine();
+
+        while (line != null) {
+            String[] tokens = line.split("\\|", 2);
+            if (tokens.length == 2) {
+                String msgTag = tokens[0];
+                String msgBody = tokens[1];
+
+                if (events != null && msgTag.equals("msg")) {
+                    handleMessage(msgBody);
+                } else if (msgTag.equals("fin")) {
+                    result = msgBody;
+                }
+            }
+
+            line = reader.readLine();
+        }
+
+        return result.equals("success");
+    }
+
+    private void handleMessage(String msgBody) {
+        String[] tokens = msgBody.split("\\|", 3);
+        if (tokens.length == 3) {
+            MessageType msgType = MessageType.valueOf(tokens[0].toUpperCase());
+            String msgLocation = tokens[1];
+            String msgText = tokens[2];
+
+            events.onMessage(msgType, msgLocation, msgText);
+        }
     }
 
     //region Logging options.
