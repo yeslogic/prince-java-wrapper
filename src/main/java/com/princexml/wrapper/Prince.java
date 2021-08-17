@@ -6,6 +6,7 @@
 package com.princexml.wrapper;
 
 import com.princexml.wrapper.enums.*;
+import com.princexml.wrapper.events.PrinceEvents;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,6 +17,7 @@ import static com.princexml.wrapper.CommandLine.*;
 
 public class Prince {
     private final String princePath;
+    private final PrinceEvents events;
 
     // Logging options.
     private boolean verbose;
@@ -120,7 +122,12 @@ public class Prince {
     private final Map<String, String> options = new LinkedHashMap<>();
 
     public Prince(String princePath) {
+        this(princePath, null);
+    }
+
+    public Prince(String princePath, PrinceEvents events) {
         this.princePath = princePath;
+        this.events = events;
     }
 
     protected List<String> getBaseCommandLine() {
