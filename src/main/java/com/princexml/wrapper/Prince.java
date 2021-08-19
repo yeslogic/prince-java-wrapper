@@ -333,6 +333,8 @@ public class Prince {
 
                 if (events != null && msgTag.equals("msg")) {
                     handleMessage(msgBody);
+                } else if (msgTag.equals("dat")) {
+                    // TODO Data messages?
                 } else if (msgTag.equals("fin")) {
                     result = msgBody;
                 }
