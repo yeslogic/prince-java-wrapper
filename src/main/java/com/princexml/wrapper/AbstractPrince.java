@@ -91,7 +91,7 @@ abstract class AbstractPrince {
     protected String pdfTitle;
     protected String pdfSubject;
     protected String pdfAuthor;
-    protected final List<String> pdfKeywords = new ArrayList<>();
+    protected String pdfKeywords;
     protected String pdfCreator;
     protected String xmp;
 
@@ -456,12 +456,8 @@ abstract class AbstractPrince {
         this.pdfAuthor = pdfAuthor;
     }
 
-    public void addPdfKeyword(String pdfKeyword) {
-        this.pdfKeywords.add(pdfKeyword);
-    }
-
-    public void clearPdfKeywords() {
-        this.pdfKeywords.clear();
+    public void setPdfKeywords(String pdfKeywords) {
+        this.pdfKeywords = pdfKeywords;
     }
 
     public void setPdfCreator(String pdfCreator) {

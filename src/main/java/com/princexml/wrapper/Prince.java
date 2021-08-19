@@ -176,7 +176,7 @@ public class Prince extends AbstractPrince {
         if (pdfTitle != null) { cmdLine.add(toCommand("pdf-title", pdfTitle)); }
         if (pdfSubject != null) { cmdLine.add(toCommand("pdf-subject", pdfSubject)); }
         if (pdfAuthor != null) { cmdLine.add(toCommand("pdf-author", pdfAuthor)); }
-        if (!pdfKeywords.isEmpty()) { cmdLine.add(toCommand("pdf-keywords", pdfKeywords)); }
+        if (pdfKeywords != null) { cmdLine.add(toCommand("pdf-keywords", pdfKeywords)); }
         if (pdfCreator != null) { cmdLine.add(toCommand("pdf-creator", pdfCreator)); }
         if (xmp != null) { cmdLine.add(toCommand("pdf-xmp", xmp)); }
 
