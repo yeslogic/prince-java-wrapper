@@ -133,6 +133,83 @@ public class Prince extends AbstractPrince {
         return result;
     }
 
+    public boolean rasterise(String xmlPath, String pdfPath) throws IOException {
+        return rasteriseInternal(Collections.singletonList(xmlPath), pdfPath);
+    }
+
+    public boolean rasterise(List<String> xmlPaths, String pdfPath) throws IOException {
+        return rasteriseInternal(xmlPaths, pdfPath);
+    }
+
+    private boolean rasteriseInternal(List<String> xmlPaths, String rasterPath) throws IOException {
+        List<String> cmdLine = getJobCommandLine("normal");
+        cmdLine.addAll(xmlPaths);
+        cmdLine.add(toCommand("raster-output", rasterPath));
+
+        Process process = Util.invokeProcess(cmdLine);
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean rasterise(String xmlPath, OutputStream out) throws IOException {
+        return rasterise(Collections.singletonList(xmlPath), out);
+    }
+
+    public boolean rasterise(List<String> xmlPaths, OutputStream out) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.addAll(xmlPaths);
+        cmdLine.add(toCommand("raster-output", "-"));
+
+        Process process = Util.invokeProcess(cmdLine);
+        InputStream fromPrince = process.getInputStream();
+
+        Util.copyInputToOutput(fromPrince, out);
+        fromPrince.close();
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean rasterise(InputStream in, OutputStream out) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add(toCommand("raster-output", "-"));
+        cmdLine.add("-");
+
+        Process process = Util.invokeProcess(cmdLine);
+        OutputStream toPrince = process.getOutputStream();
+        InputStream fromPrince = process.getInputStream();
+
+        Util.copyInputToOutput(in, toPrince);
+        toPrince.close();
+
+        Util.copyInputToOutput(fromPrince, out);
+        fromPrince.close();
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean rasteriseString(String xml, String rasterPath) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add(toCommand("raster-output", rasterPath));
+        cmdLine.add("-");
+
+        Process process = Util.invokeProcess(cmdLine);
+        OutputStream toPrince = process.getOutputStream();
+
+        toPrince.write(xml.getBytes(StandardCharsets.UTF_8));
+        toPrince.close();
+
+        return readMessagesFromStderr(process);
+    }
+
+    public boolean rasteriseString(String xml, OutputStream out) throws IOException {
+        InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+
+        boolean result = rasterise(in, out);
+        in.close();
+
+        return result;
+    }
+
     private List<String> getJobCommandLine(String logType) {
         List<String> cmdLine = getBaseCommandLine();
 
