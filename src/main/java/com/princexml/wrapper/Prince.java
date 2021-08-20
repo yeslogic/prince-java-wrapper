@@ -11,6 +11,7 @@ import com.princexml.wrapper.events.PrinceEvents;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.princexml.wrapper.CommandLine.*;
 
@@ -160,7 +161,8 @@ public class Prince extends AbstractPrince {
         if (pdfLang != null) { cmdLine.add(toCommand("pdf-lang", pdfLang)); }
         if (pdfProfile != null) { cmdLine.add(toCommand("pdf-profile", pdfProfile)); }
         if (pdfOutputIntent != null) { cmdLine.add(toCommand("pdf-output-intent", pdfOutputIntent)); }
-        if (!fileAttachments.isEmpty()) { cmdLine.addAll(toCommands("attach", fileAttachments)); }
+        if (!fileAttachments.isEmpty()) { cmdLine.addAll(toCommands("attach",
+                fileAttachments.stream().map(a -> a.url).collect(Collectors.toList()))); }
         if (noArtificialFonts) { cmdLine.add(toCommand("no-artificial-fonts")); }
         if (noEmbedFonts) { cmdLine.add(toCommand("no-embed-fonts")); }
         if (noSubsetFonts) { cmdLine.add(toCommand("no-subset-fonts")); }

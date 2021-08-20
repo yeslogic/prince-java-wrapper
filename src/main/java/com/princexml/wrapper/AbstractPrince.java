@@ -76,7 +76,7 @@ abstract class AbstractPrince {
     protected String pdfLang;
     protected PdfProfile pdfProfile;
     protected String pdfOutputIntent;
-    protected final List<String> fileAttachments = new ArrayList<>();
+    protected final List<FileAttachment> fileAttachments = new ArrayList<>();
     protected boolean noArtificialFonts;
     protected boolean noEmbedFonts;
     protected boolean noSubsetFonts;
@@ -399,7 +399,7 @@ abstract class AbstractPrince {
     }
 
     public void addFileAttachment(String fileAttachment) {
-        this.fileAttachments.add(fileAttachment);
+        this.fileAttachments.add(new FileAttachment(fileAttachment));
     }
 
     public void clearFileAttachments() {
