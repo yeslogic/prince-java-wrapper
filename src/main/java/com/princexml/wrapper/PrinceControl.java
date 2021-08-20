@@ -5,6 +5,7 @@
 
 package com.princexml.wrapper;
 
+import com.princexml.wrapper.enums.InputType;
 import com.princexml.wrapper.events.PrinceEvents;
 
 import java.io.*;
@@ -44,6 +45,10 @@ public class PrinceControl extends AbstractPrince {
 
     @Override
     public boolean convert(InputStream in, OutputStream out) throws IOException {
+        if (inputType == null || inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Util.copyInputToOutput(in, baos);
         addResource(baos.toByteArray());
@@ -53,6 +58,10 @@ public class PrinceControl extends AbstractPrince {
 
     @Override
     public boolean convertString(String xml, OutputStream out) throws IOException {
+        if (inputType == null || inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
         addResource(xml.getBytes(StandardCharsets.UTF_8));
         return convert(out);
     }

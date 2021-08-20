@@ -93,6 +93,10 @@ public class Prince extends AbstractPrince {
 
     @Override
     public boolean convert(InputStream in, OutputStream out) throws IOException {
+        if (inputType == null || inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
         List<String> cmdLine = getJobCommandLine("buffered");
         cmdLine.add("-");
 
@@ -110,6 +114,10 @@ public class Prince extends AbstractPrince {
     }
 
     public boolean convertString(String xml, String pdfPath) throws IOException {
+        if (inputType == null || inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
         List<String> cmdLine = getJobCommandLine("buffered");
         cmdLine.add(toCommand("output", pdfPath));
         cmdLine.add("-");
@@ -156,6 +164,13 @@ public class Prince extends AbstractPrince {
     }
 
     public boolean rasterise(List<String> xmlPaths, OutputStream out) throws IOException {
+        if (rasterPages < 1) {
+            throw new RuntimeException("rasterPages has to be set to a value > 0");
+        }
+        if (rasterFormat == null || rasterFormat == RasterFormat.AUTO) {
+            throw new RuntimeException("rasterFormat has to be set to JPEG or PNG");
+        }
+
         List<String> cmdLine = getJobCommandLine("buffered");
         cmdLine.addAll(xmlPaths);
         cmdLine.add(toCommand("raster-output", "-"));
@@ -170,6 +185,16 @@ public class Prince extends AbstractPrince {
     }
 
     public boolean rasterise(InputStream in, OutputStream out) throws IOException {
+        if (inputType == null || inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+        if (rasterPages < 1) {
+            throw new RuntimeException("rasterPages has to be set to a value > 0");
+        }
+        if (rasterFormat == null || rasterFormat == RasterFormat.AUTO) {
+            throw new RuntimeException("rasterFormat has to be set to JPEG or PNG");
+        }
+
         List<String> cmdLine = getJobCommandLine("buffered");
         cmdLine.add(toCommand("raster-output", "-"));
         cmdLine.add("-");
@@ -188,6 +213,10 @@ public class Prince extends AbstractPrince {
     }
 
     public boolean rasteriseString(String xml, String rasterPath) throws IOException {
+        if (inputType == null || inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
         List<String> cmdLine = getJobCommandLine("buffered");
         cmdLine.add(toCommand("raster-output", rasterPath));
         cmdLine.add("-");
