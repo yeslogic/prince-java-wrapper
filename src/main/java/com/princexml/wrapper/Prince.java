@@ -29,7 +29,6 @@ public class Prince extends AbstractPrince {
     private int cssDpi;
 
     // Raster output options.
-    private String rasterOutput;
     private RasterFormat rasterFormat;
     private int rasterJpegQuality = -1;
     private int rasterPages;
@@ -193,7 +192,6 @@ public class Prince extends AbstractPrince {
         if (disallowModify) { cmdLine.add(toCommand("disallow-modify")); }
         if (allowAssembly) { cmdLine.add(toCommand("allow-assembly")); }
 
-        if (rasterOutput != null) { cmdLine.add(toCommand("raster-output", rasterOutput)); }
         if (rasterFormat != null) { cmdLine.add(toCommand("raster-format", rasterFormat)); }
         if (rasterJpegQuality > -1) { cmdLine.add(toCommand("raster-jpeg-quality", rasterJpegQuality)); }
         if (rasterPages > 0) { cmdLine.add(toCommand("raster-pages", rasterPages)); }
@@ -249,10 +247,6 @@ public class Prince extends AbstractPrince {
     //endregion
 
     //region Raster output options.
-    public void setRasterOutput(String rasterOutput) {
-        this.rasterOutput = rasterOutput;
-    }
-
     public void setRasterFormat(RasterFormat rasterFormat) {
         this.rasterFormat = rasterFormat;
     }
