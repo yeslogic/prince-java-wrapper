@@ -116,12 +116,53 @@ abstract class AbstractPrince {
         this.events = events;
     }
 
+    /**
+     * Convert an XML or HTML file to a PDF file. This method is useful for
+     * servlets as it allows Prince to write the PDF output directly to the
+     * {@code OutputStream} of the servlet response.
+     * @param inputPath The filename of the input XML or HTML document.
+     * @param output The OutputStream to which Prince will write the PDF output.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public abstract boolean convert(String inputPath, OutputStream output) throws IOException;
 
+    /**
+     * Convert multiple XML or HTML files to a PDF file. This method is useful
+     * for servlets as it allows Prince to write the PDF output directly to the
+     * {@code OutputStream} of the servlet response.
+     * @param inputPaths The filenames of the input XML or HTML documents.
+     * @param output The OutputStream to which Prince will write the PDF output.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public abstract boolean convert(List<String> inputPaths, OutputStream output) throws IOException;
 
+    /**
+     * Convert an XML or HTML stream to a PDF file. This method is useful for
+     * servlets as it allows Prince to write the PDF output directly to the
+     * {@code OutputStream} of the servlet response.
+     * <p>
+     * Note that it may be helpful to specify a base URL or path for the input
+     * document using {@link #setBaseUrl(String)}. This allows relative URLs and
+     * paths in the document (e.g. for images) to be resolved correctly.
+     * @param input The InputStream from which Prince will read the XML or HTML
+     *              document.
+     * @param output The OutputStream to which Prince will write the PDF output.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public abstract boolean convert(InputStream input, OutputStream output) throws IOException;
 
+    /**
+     * Convert an XML or HTML string to a PDF file. This method is useful for
+     * servlets as it allows Prince to write the PDF output directly to the
+     * {@code OutputStream} of the servlet response.
+     * @param input The XML or HTML document in the form of a String.
+     * @param output The OutputStream to which Prince will write the PDF output.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public abstract boolean convertString(String input, OutputStream output) throws IOException;
 
     protected List<String> getBaseCommandLine() {
@@ -216,86 +257,190 @@ abstract class AbstractPrince {
     }
 
     //region Logging options.
+    /**
+     * Enable logging of informative messages.
+     * @param verbose true to enable verbose logging.
+     */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 
+    /**
+     * Enable logging of debug messages.
+     * @param debug true to enable debug logging.
+     */
     public void setDebug(boolean debug) {
         this.debug = debug;
     }
 
+    /**
+     * Specify a file that Prince should use to log messages. If this method
+     * is not called then Prince will not write to any log. This method does
+     * not affect the operation of {@link com.princexml.wrapper.events.PrinceEvents},
+     * which will also receive messages from Prince.
+     * @param log The filename that Prince should use to log messages.
+     */
     public void setLog(String log) {
         this.log = log;
     }
 
+    /**
+     * Disable warnings about unknown CSS features. Enabled by default unless
+     * explicitly disabled.
+     * @param noWarnCssUnknown true to disable warnings.
+     */
     public void setNoWarnCssUnknown(boolean noWarnCssUnknown) {
         this.noWarnCssUnknown = noWarnCssUnknown;
     }
 
+    /**
+     * Disable warnings about unsupported CSS features. Enabled by default
+     * unless explicitly disabled.
+     * @param noWarnCssUnsupported true to disable warnings.
+     */
     public void setNoWarnCssUnsupported(boolean noWarnCssUnsupported) {
         this.noWarnCssUnsupported = noWarnCssUnsupported;
     }
     //endregion
 
     //region Input options.
+    /**
+     * Specify the input type of the document.
+     * <p>
+     * Setting this to {@link com.princexml.wrapper.enums.InputType#XML} or
+     * {@link com.princexml.wrapper.enums.InputType#HTML} is required if a
+     * document is provided via an {@code InputStream} or {@code String}, as
+     * the types of these documents cannot be determined.
+     * @param inputType The document's input type.
+     */
     public void setInputType(InputType inputType) {
         this.inputType = inputType;
     }
 
+    /**
+     * Specify the base URL of the input document. This can be used to override
+     * the path of the input document, which is convenient when processing local
+     * copies of a document from a website.
+     * <p>
+     * It is also helpful for specifying a base URL for documents that are
+     * provided via an {@code InputStream} or {@code String}, as these documents
+     * have no natural base URL.
+     * @param baseUrl The base URL or path of the input document.
+     */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
+    /**
+     * Enable XInclude and XML external entities (XXE). Note that XInclude only
+     * applies to XML files. To apply it to HTML files, the input format needs
+     * to be specified with {@link #setInputType(InputType)}.
+     * @param xInclude true to enable XInclude and XXE.
+     */
     public void setXInclude(boolean xInclude) {
         this.xInclude = xInclude;
     }
 
+    /**
+     * Enable XML external entities (XXE).
+     * @param xmlExternalEntities true to enable XXE.
+     */
     public void setXmlExternalEntities(boolean xmlExternalEntities) {
         this.xmlExternalEntities = xmlExternalEntities;
     }
     //endregion
 
     //region Network options.
+    /**
+     * Disable network access (prevents HTTP downloads). Enabled by default
+     * unless explicitly disabled.
+     * @param noNetwork true to disable network access.
+     */
     public void setNoNetwork(boolean noNetwork) {
         this.noNetwork = noNetwork;
     }
 
+    /**
+     * Disable all HTTP and HTTPS redirects. Enabled by default unless explicitly
+     * disabled.
+     * @param noRedirects true to disable redirects.
+     */
     public void setNoRedirects(boolean noRedirects) {
         this.noRedirects = noRedirects;
     }
 
+    /**
+     * Specify the username for HTTP authentication.
+     * @param authUser The username for authentication.
+     */
     public void setAuthUser(String authUser) {
         this.authUser = authUser;
     }
 
+    /**
+     * Specify the password for HTTP authentication.
+     * @param authPassword The password for authentication.
+     */
     public void setAuthPassword(String authPassword) {
         this.authPassword = authPassword;
     }
 
+    /**
+     * Send username and password credentials to the specified server only.
+     * The default is to send them to any server which challenges for authentication.
+     * @param authServer The server to send credentials to.
+     */
     public void setAuthServer(String authServer) {
         this.authServer = authServer;
     }
 
+    /**
+     * Send username and password credentials only for requests with the given
+     * scheme.
+     * @param authScheme The authentication scheme.
+     */
     public void setAuthScheme(AuthScheme authScheme) {
         this.authScheme = authScheme;
     }
 
+    /**
+     * Specify a HTTP authentication method to enable. This method can be called
+     * more than once to add multiple authentication methods.
+     * @param authMethod The authentication method to enable.
+     */
     public void addAuthMethod(AuthMethod authMethod) {
         this.authMethods.add(authMethod);
     }
 
+    /**
+     * Clear all the enabled authentication methods accumulated by calling
+     * {@link #addAuthMethod(AuthMethod)}.
+     */
     public void clearAuthMethods() {
         this.authMethods.clear();
     }
 
+    /**
+     * Do not authenticate with named servers until asked. Enabled by default
+     * unless explicitly disabled.
+     * @param noAuthPreemptive true to disable authentication preemptive.
+     */
     public void setNoAuthPreemptive(boolean noAuthPreemptive) {
         this.noAuthPreemptive = noAuthPreemptive;
     }
 
+    /**
+     * Specify the URL for the HTTP proxy server, if needed.
+     * @param httpProxy The URL for the HTTP proxy server.
+     */
     public void setHttpProxy(String httpProxy) {
         this.httpProxy = httpProxy;
     }
 
+    /**
+     * Specify the timeout for HTTP requests.
+     * @param httpTimeout The HTTP timeout in seconds.
+     */
     public void setHttpTimeout(int httpTimeout) {
         if (httpTimeout < 1) {
             throw new IllegalArgumentException("invalid httpTimeout value (must be > 0)");
@@ -303,72 +448,147 @@ abstract class AbstractPrince {
         this.httpTimeout = httpTimeout;
     }
 
+    /**
+     * Add a value for the {@code Set-Cookie} HTTP header value. This method can
+     * be called more than once to add multiple cookies.
+     * @param cookie The cookie to be added.
+     */
     public void addCookie(String cookie) {
         this.cookies.add(cookie);
     }
 
+    /**
+     * Clear all the cookies accumulated by calling {@link #addCookie(String)}.
+     */
     public void clearCookies() {
         this.cookies.clear();
     }
 
+    /**
+     * Specify a file containing HTTP cookies.
+     * @param cookieJar The filename of the file containing HTTP cookies.
+     */
     public void setCookieJar(String cookieJar) {
         this.cookieJar = cookieJar;
     }
 
+    /**
+     * Specify an SSL certificate file.
+     * @param sslCaCert The filename of the SSL certificate file.
+     */
     public void setSslCaCert(String sslCaCert) {
         this.sslCaCert = sslCaCert;
     }
 
+    /**
+     * Specify an SSL certificate directory.
+     * @param sslCaPath The SSL certificate directory.
+     */
     public void setSslCaPath(String sslCaPath) {
         this.sslCaPath = sslCaPath;
     }
 
+    /**
+     * Specify an SSL client certificate file. On MacOS, specify a PKCS#12 file
+     * containing a client certificate and private key. Client authentication is
+     * not supported on Windows.
+     * @param sslCert The filename of the SSL client certificate file.
+     */
     public void setSslCert(String sslCert) {
         this.sslCert = sslCert;
     }
 
+    /**
+     * Specify the SSL client certificate file type. This option is not supported
+     * on MacOS or Windows.
+     * @param sslCertType The SSL client certificate file type.
+     */
     public void setSslCertType(SslType sslCertType) {
         this.sslCertType = sslCertType;
     }
 
+    /**
+     * Specify an SSL private key file. This option is not supported on MacOS or
+     * Windows.
+     * @param sslKey The filename of the SSL private key file.
+     */
     public void setSslKey(String sslKey) {
         this.sslKey = sslKey;
     }
 
+    /**
+     * Specify the SSL private key file type. This option is not supported on MacOS
+     * or Windows.
+     * @param sslKeyType The SSL private key file type.
+     */
     public void setSslKeyType(SslType sslKeyType) {
         this.sslKeyType = sslKeyType;
     }
 
+    /**
+     * Specify a password for the SSL private key.
+     * @param sslKeyPassword The password for the SSL private key.
+     */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
 
+    /**
+     * Set the minimum version of SSL to allow.
+     * @param sslVersion The minimum version to allow.
+     */
     public void setSslVersion(SslVersion sslVersion) {
         this.sslVersion = sslVersion;
     }
 
+    /**
+     * Specify whether to disable SSL verification. Enabled by default unless
+     * explicitly disabled.
+     * @param insecure true to disable SSL verification (not recommended).
+     */
     public void setInsecure(boolean insecure) {
         this.insecure = insecure;
     }
 
+    /**
+     * Disable downloading multiple HTTP resources at once. Enabled by default
+     * unless explicitly disabled.
+     * @param noParallelDownloads true to disable parallel downloads.
+     */
     public void setNoParallelDownloads(boolean noParallelDownloads) {
         this.noParallelDownloads = noParallelDownloads;
     }
     //endregion
 
     //region JavaScript options.
+    /**
+     * Specify whether JavaScript found in documents should be run.
+     * @param javaScript true if document scripts should be run.
+     */
     public void setJavaScript(boolean javaScript) {
         this.javaScript = javaScript;
     }
 
+    /**
+     * Add a JavaScript script that will be run before conversion. This
+     * method can be called more than once to add multiple scripts.
+     * @param script The filename of the script to run.
+     */
     public void addScript(String script) {
         this.scripts.add(script);
     }
 
+    /**
+     * Clear all of the scripts accumulated by calling {@link #addScript(String)}.
+     */
     public void clearScripts() {
         this.scripts.clear();
     }
 
+    /**
+     * Defines the maximum number of consequent layout passes.
+     * @param maxPasses The number of maximum passes.
+     */
     public void setMaxPasses(int maxPasses) {
         if (maxPasses < 1) {
             throw new IllegalArgumentException("invalid maxPasses value (must be > 0)");
@@ -378,152 +598,308 @@ abstract class AbstractPrince {
     //endregion
 
     //region CSS options.
+    /**
+     * Add a CSS style sheet that will be applied to each input document. This
+     * method can be called more than once to add multiple style sheets.
+     * @param styleSheet The filename of the CSS style sheet to apply.
+     */
     public void addStyleSheet(String styleSheet) {
         this.styleSheets.add(styleSheet);
     }
 
+    /**
+     * Clear all of the CSS style sheets accumulated by calling
+     * {@link #addStyleSheet(String)}.
+     */
     public void clearStyleSheets() {
         this.styleSheets.clear();
     }
 
+    /**
+     * Specify the media type.
+     * @param media The media type (e.g. "print", "screen").
+     */
     public void setMedia(String media) {
         this.media = media;
     }
 
+    /**
+     * Ignore author style sheets. Enabled by default unless explicitly disabled.
+     * @param noAuthorStyle true to ignore author style sheets.
+     */
     public void setNoAuthorStyle(boolean noAuthorStyle) {
         this.noAuthorStyle = noAuthorStyle;
     }
 
+    /**
+     * Ignore default style sheets. Enabled by default unless explicitly disabled.
+     * @param noDefaultStyle true to ignore default style sheets.
+     */
     public void setNoDefaultStyle(boolean noDefaultStyle) {
         this.noDefaultStyle = noDefaultStyle;
     }
     //endregion
 
     //region PDF output options.
+    /**
+     * Specify the PDF ID to use.
+     * @param pdfId The PDF ID.
+     */
     public void setPdfId(String pdfId) {
         this.pdfId = pdfId;
     }
 
+    /**
+     * Specify the PDF document's Lang entry in the document catalog.
+     * @param pdfLang The PDF document's lang entry.
+     */
     public void setPdfLang(String pdfLang) {
         this.pdfLang = pdfLang;
     }
 
+    /**
+     * Specify the PDF profile to use.
+     * @param pdfProfile The PDF profile.
+     */
     public void setPdfProfile(PdfProfile pdfProfile) {
         this.pdfProfile = pdfProfile;
     }
 
+    /**
+     * Specify the ICC profile to use.
+     * @param pdfOutputIntent The ICC profile.
+     */
     public void setPdfOutputIntent(String pdfOutputIntent) {
         this.pdfOutputIntent = pdfOutputIntent;
     }
 
+    /**
+     * Add a file attachment that will be attached to the PDF file. This method
+     * can be called more than once to add multiple file attachments.
+     * @param fileAttachment The filename of the file attachment.
+     */
     public void addFileAttachment(String fileAttachment) {
         this.fileAttachments.add(new FileAttachment(fileAttachment));
     }
 
+    /**
+     * Clear all of the file attachments accumulated by calling {@link #addFileAttachment(String)}.
+     */
     public void clearFileAttachments() {
         this.fileAttachments.clear();
     }
 
+    /**
+     * Specify whether artificial bold/italic fonts should be generated if
+     * necessary. Enabled by default unless explicitly disabled.
+     * @param noArtificialFonts true to disable artificial bold/italic fonts.
+     */
     public void setNoArtificialFonts(boolean noArtificialFonts) {
         this.noArtificialFonts = noArtificialFonts;
     }
 
+    /**
+     * Specify whether fonts should be embedded in the output PDF file. Enabled
+     * by default unless explicitly disabled.
+     * @param noEmbedFonts true to disable PDF font embedding.
+     */
     public void setNoEmbedFonts(boolean noEmbedFonts) {
         this.noEmbedFonts = noEmbedFonts;
     }
 
+    /**
+     * Specify whether embedded fonts should be subset in the output PDF file.
+     * Enabled by default unless explicitly disabled.
+     * @param noSubsetFonts true to disable PDF font subsetting.
+     */
     public void setNoSubsetFonts(boolean noSubsetFonts) {
         this.noSubsetFonts = noSubsetFonts;
     }
 
+    /**
+     * Ensure that all fonts are encoded in the PDF using their identity encoding
+     * (directly mapping to glyph indices), even if they could have used MacRoman
+     * or some other encoding.
+     * @param forceIdentityEncoding true to force identity encoding.
+     */
     public void setForceIdentityEncoding(boolean forceIdentityEncoding) {
         this.forceIdentityEncoding = forceIdentityEncoding;
     }
 
+    /**
+     * Specify whether compression should be applied to the output PDF file.
+     * Enabled by default unless explicitly disabled.
+     * @param noCompress true to disable PDF compression.
+     */
     public void setNoCompress(boolean noCompress) {
         this.noCompress = noCompress;
     }
 
+    /**
+     * Disable PDF object streams. Enabled by default unless explicitly disabled.
+     * @param noObjectStreams true to disable PDF object streams.
+     */
     public void setNoObjectStreams(boolean noObjectStreams) {
         this.noObjectStreams = noObjectStreams;
     }
 
+    /**
+     * Convert colors to output intent color space.
+     * @param convertColors true to convert colors to output intent color space.
+     */
     public void setConvertColors(boolean convertColors) {
         this.convertColors = convertColors;
     }
 
+    /**
+     * Set fallback ICC profile for uncalibrated CMYK.
+     * @param fallbackCmykProfile The fallback ICC profile.
+     */
     public void setFallbackCmykProfile(String fallbackCmykProfile) {
         this.fallbackCmykProfile = fallbackCmykProfile;
     }
 
+    /**
+     * Enable tagged PDF.
+     * @param taggedPdf true to enable tagged PDF.
+     */
     public void setTaggedPdf(boolean taggedPdf) {
         this.taggedPdf = taggedPdf;
     }
     //endregion
 
     //region PDF metadata options.
+    /**
+     * Specify the document title for PDF metadata.
+     * @param pdfTitle The document title.
+     */
     public void setPdfTitle(String pdfTitle) {
         this.pdfTitle = pdfTitle;
     }
 
+    /**
+     * Specify the document subject for PDF metadata.
+     * @param pdfSubject The document subject.
+     */
     public void setPdfSubject(String pdfSubject) {
         this.pdfSubject = pdfSubject;
     }
 
+    /**
+     * Specify the document author for PDF metadata.
+     * @param pdfAuthor The document author.
+     */
     public void setPdfAuthor(String pdfAuthor) {
         this.pdfAuthor = pdfAuthor;
     }
 
+    /**
+     * Specify the document keywords for PDF metadata.
+     * @param pdfKeywords The document keywords.
+     */
     public void setPdfKeywords(String pdfKeywords) {
         this.pdfKeywords = pdfKeywords;
     }
 
+    /**
+     * Specify the document creator for PDF metadata.
+     * @param pdfCreator The document creator.
+     */
     public void setPdfCreator(String pdfCreator) {
         this.pdfCreator = pdfCreator;
     }
 
+    /**
+     * Specify an XMP file that contains XMP metadata to be included in the
+     * output PDF file.
+     * @param xmp The filename of the XMP file.
+     */
     public void setXmp(String xmp) {
         this.xmp = xmp;
     }
     //endregion
 
     //region PDF encryption options.
+    /**
+     * Specify whether encryption should be applied to the output file.
+     * @param encrypt true to enable PDF encryption.
+     */
     public void setEncrypt(boolean encrypt) {
         this.encrypt = encrypt;
     }
 
+    /**
+     * Specify the size of the encryption key.
+     * @param keyBits The size of the encryption key.
+     */
     public void setKeyBits(KeyBits keyBits) {
         this.keyBits = keyBits;
     }
 
+    /**
+     * Specify the user password for the PDF file.
+     * @param userPassword The user password.
+     */
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
 
+    /**
+     * Specify the owner password for the PDF file.
+     * @param ownerPassword The owner password.
+     */
     public void setOwnerPassword(String ownerPassword) {
         this.ownerPassword = ownerPassword;
     }
 
+    /**
+     * Disallow printing of the PDF file.
+     * @param disallowPrint true to disallow printing.
+     */
     public void setDisallowPrint(boolean disallowPrint) {
         this.disallowPrint = disallowPrint;
     }
 
+    /**
+     * Disallow modification of the PDF file.
+     * @param disallowCopy true to disallow modification.
+     */
     public void setDisallowCopy(boolean disallowCopy) {
         this.disallowCopy = disallowCopy;
     }
 
+    /**
+     * Used together with {@link #setDisallowCopy(boolean)}, which creates an
+     * exception by enabling text access for screen reader devices for the
+     * visually impaired.
+     * @param allowCopyForAccessibility true to allow text access.
+     */
     public void setAllowCopyForAccessibility(boolean allowCopyForAccessibility) {
         this.allowCopyForAccessibility = allowCopyForAccessibility;
     }
 
+    /**
+     * Disallow annotation of the PDF file.
+     * @param disallowAnnotate true to disallow annotation.
+     */
     public void setDisallowAnnotate(boolean disallowAnnotate) {
         this.disallowAnnotate = disallowAnnotate;
     }
 
+    /**
+     * Disallow modification of the PDF file.
+     * @param disallowModify true to disallow modification.
+     */
     public void setDisallowModify(boolean disallowModify) {
         this.disallowModify = disallowModify;
     }
 
+    /**
+     * Used together with {@link #setDisallowModify(boolean)}, which creates an
+     * exception. It allows the document to be inserted into another document or
+     * other pages to be added, but the content of the document cannot be modified.
+     * @param allowAssembly true to allow assembly.
+     */
     public void setAllowAssembly(boolean allowAssembly) {
         this.allowAssembly = allowAssembly;
     }

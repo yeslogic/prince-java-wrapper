@@ -9,9 +9,13 @@ package com.princexml.wrapper.enums;
  * HTTP authentication methods.
  */
 public enum AuthMethod {
+    /** Equates to the string {@code "basic"}. */
     BASIC("basic"),
+    /** Equates to the string {@code "digest"}. */
     DIGEST("digest"),
+    /** Equates to the string {@code "ntlm"}. */
     NTLM("ntlm"),
+    /** Equates to the string {@code "negotiate"}. */
     NEGOTIATE("negotiate");
 
     private final String authMethod;
