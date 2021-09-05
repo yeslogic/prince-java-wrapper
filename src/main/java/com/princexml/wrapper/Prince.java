@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 
 import static com.princexml.wrapper.CommandLine.*;
 
+/**
+ * The main Prince class.
+ */
 public class Prince extends AbstractPrince {
     // Input options.
     private final List<String> remaps = new ArrayList<>();
@@ -39,22 +42,58 @@ public class Prince extends AbstractPrince {
     // Additional options.
     private final Map<String, String> options = new LinkedHashMap<>();
 
+    /**
+     * Constructor for {@code Prince}.
+     * @param princePath The path of the Prince executable. For example, this may be
+     *                   <code>C:\Program&#xA0;Files\Prince\engine\bin\prince.exe</code>
+     *                   on Windows or <code>/usr/bin/prince</code> on Linux.
+     */
     public Prince(String princePath) {
         super(princePath);
     }
 
+    /**
+     * Constructor for {@code Prince}.
+     * @param princePath The path of the Prince executable. For example, this may be
+     *                   <code>C:\Program&#xA0;Files\Prince\engine\bin\prince.exe</code>
+     *                   on Windows or <code>/usr/bin/prince</code> on Linux.
+     * @param events An implementation of {@link com.princexml.wrapper.events.PrinceEvents}
+     *               that will receive messages returned from Prince.
+     */
     public Prince(String princePath, PrinceEvents events) {
         super(princePath, events);
     }
 
+    /**
+     * Convert an XML or HTML file to a PDF file. The name of the output PDF
+     * file will be the same as the name of the input file, but with the
+     * {@code .pdf} extension.
+     * @param inputPath The filename of the input XML or HTML document.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean convert(String inputPath) throws IOException {
         return convertInternal(Collections.singletonList(inputPath), null);
     }
 
+    /**
+     * Convert an XML or HTML file to a PDF file.
+     * @param inputPath The filename of the input XML or HTML document.
+     * @param outputPath The filename of the output PDF file.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean convert(String inputPath, String outputPath) throws IOException {
         return convertInternal(Collections.singletonList(inputPath), outputPath);
     }
 
+    /**
+     * Convert multiple XML or HTML files to a PDF file.
+     * @param inputPaths The filenames of the input XML or HTML documents.
+     * @param outputPath The filename of the output PDF file.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean convert(List<String> inputPaths, String outputPath) throws IOException {
         return convertInternal(inputPaths, outputPath);
     }
@@ -71,11 +110,13 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convert(String inputPath, OutputStream output) throws IOException {
         return convert(Collections.singletonList(inputPath), output);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convert(List<String> inputPaths, OutputStream output) throws IOException {
         List<String> cmdLine = getJobCommandLine("buffered");
@@ -91,6 +132,7 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convert(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
@@ -113,6 +155,13 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /**
+     * Convert an XML or HTML string to a PDF file.
+     * @param input The XML or HTML document in the form of a String.
+     * @param outputPath The filename of the output PDF file.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean convertString(String input, String outputPath) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
@@ -131,6 +180,7 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convertString(String input, OutputStream output) throws IOException {
         InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
@@ -141,10 +191,28 @@ public class Prince extends AbstractPrince {
         return result;
     }
 
+    /**
+     * Rasterize an XML or HTML file.
+     * @param inputPath The filename of the input XML or HTML document.
+     * @param outputPath A template string from which the raster files will be named
+     *                   (e.g. "page_%02d.png" will cause Prince to generate
+     *                   page_01.png, page_02.png, ..., page_10.png etc.).
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterize(String inputPath, String outputPath) throws IOException {
         return rasterizeInternal(Collections.singletonList(inputPath), outputPath);
     }
 
+    /**
+     * Rasterize multiple XML or HTML files.
+     * @param inputPaths The filenames of the input XML or HTML documents.
+     * @param outputPath A template string from which the raster files will be named
+     *                   (e.g. "page_%02d.png" will cause Prince to generate
+     *                   page_01.png, page_02.png, ..., page_10.png etc.).
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterize(List<String> inputPaths, String outputPath) throws IOException {
         return rasterizeInternal(inputPaths, outputPath);
     }
@@ -159,10 +227,28 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /**
+     * Rasterize an XML or HTML file. This method is useful for servlets as it
+     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * of the servlet response.
+     * @param inputPath The filename of the input XML or HTML document.
+     * @param output The OutputStream to which Prince will write the raster output.
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterize(String inputPath, OutputStream output) throws IOException {
         return rasterize(Collections.singletonList(inputPath), output);
     }
 
+    /**
+     * Rasterize multiple XML or HTML files. This method is useful for servlets as it
+     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * of the servlet response.
+     * @param inputPaths The filenames of the input XML or HTML documents.
+     * @param output The OutputStream to which Prince will write the raster output.
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterize(List<String> inputPaths, OutputStream output) throws IOException {
         if (rasterPage < 1) {
             throw new RuntimeException("rasterPage has to be set to a value > 0");
@@ -184,6 +270,16 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /**
+     * Rasterize an XML or HTML stream. This method is useful for servlets as it
+     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * of the servlet response.
+     * @param input The InputStream from which Prince will read the XML or HTML
+     *              document.
+     * @param output The OutputStream to which Prince will write the raster output.
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterize(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
@@ -212,6 +308,15 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /**
+     * Rasterize an XML or HTML string.
+     * @param input The XML or HTML document in the form of a String.
+     * @param outputPath A template string from which the raster files will be named
+     *                   (e.g. "page_%02d.png" will cause Prince to generate
+     *                   page_01.png, page_02.png, ..., page_10.png etc.).
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterizeString(String input, String outputPath) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
@@ -230,6 +335,15 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
+    /**
+     * Rasterize an XML or HTML string. This method is useful for servlets as it
+     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * of the servlet response.
+     * @param input The XML or HTML document in the form of a String.
+     * @param output The OutputStream to which Prince will write the raster output.
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
     public boolean rasterizeString(String input, OutputStream output) throws IOException {
         InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 
@@ -316,34 +430,64 @@ public class Prince extends AbstractPrince {
     }
 
     //region Input options.
+    /**
+     * Rather than retrieving documents beginning with {@code URL}, get them
+     * from the local directory {@code DIR}. This method can be called more than
+     * once to add multiple remappings.
+     * @param remap The remapping "URL=DIR".
+     */
     public void addRemap(String remap) {
         this.remaps.add(remap);
     }
 
+    /**
+     * Clear all of the remappings accumulated by calling {@link #addRemap(String)}.
+     */
     public void clearRemaps() {
         this.remaps.clear();
     }
 
+    /**
+     * Disable access to local files. Enabled by default unless explicitly disabled.
+     * @param noLocalFiles true to disable local files.
+     */
     public void setNoLocalFiles(boolean noLocalFiles) {
         this.noLocalFiles = noLocalFiles;
     }
     //endregion
 
     //region CSS options.
+    /**
+     * Specify the page size.
+     * @param pageSize The page size to use (e.g. "A4").
+     */
     public void setPageSize(String pageSize) {
         this.pageSize = pageSize;
     }
 
+    /**
+     * Specify the page margin.
+     * @param pageMargin The page margin to use (e.g. "20mm").
+     */
     public void setPageMargin(String pageMargin) {
         this.pageMargin = pageMargin;
     }
     //endregion
 
     //region PDF output options.
+    /**
+     * Disable system fonts in the PDF output. Only fonts defined with {@code font-face}
+     * rules in CSS will be available. Enabled by default unless explicitly disabled.
+     * @param noSystemFonts true to disable system fonts.
+     */
     public void setNoSystemFonts(boolean noSystemFonts) {
         this.noSystemFonts = noSystemFonts;
     }
 
+    /**
+     * Changes the DPI of the "px" units in CSS, which defaults to 96 dpi.
+     * @param cssDpi The DPI of the "px" units.
+     */
     public void setCssDpi(int cssDpi) {
         if (cssDpi < 1) {
             throw new IllegalArgumentException("invalid cssDpi value (must be > 0)");
@@ -353,10 +497,18 @@ public class Prince extends AbstractPrince {
     //endregion
 
     //region Raster output options.
+    /**
+     * Specify the format for the raster output.
+     * @param rasterFormat The format for the raster output.
+     */
     public void setRasterFormat(RasterFormat rasterFormat) {
         this.rasterFormat = rasterFormat;
     }
 
+    /**
+     * Specify the level of JPEG compression when generating raster output in JPEG format.
+     * @param rasterJpegQuality The level of JPEG compression.
+     */
     public void setRasterJpegQuality(int rasterJpegQuality) {
         if (rasterJpegQuality < 0 || rasterJpegQuality > 100) {
             throw new IllegalArgumentException("invalid rasterJpegQuality value (must be [0, 100])");
@@ -364,6 +516,10 @@ public class Prince extends AbstractPrince {
         this.rasterJpegQuality = rasterJpegQuality;
     }
 
+    /**
+     * Set the page to be rasterized.
+     * @param rasterPage The page to be rasterized.
+     */
     public void setRasterPage(int rasterPage) {
         if (rasterPage < 1) {
             throw new IllegalArgumentException("invalid rasterPage value (must be > 0)");
@@ -371,6 +527,10 @@ public class Prince extends AbstractPrince {
         this.rasterPage = rasterPage;
     }
 
+    /**
+     * Specify the resolution of raster output.
+     * @param rasterDpi The raster output resolution.
+     */
     public void setRasterDpi(int rasterDpi) {
         if (rasterDpi < 1) {
             throw new IllegalArgumentException("invalid rasterDpi value (must be > 0)");
@@ -378,24 +538,46 @@ public class Prince extends AbstractPrince {
         this.rasterDpi = rasterDpi;
     }
 
+    /**
+     * Set the number of threads to use for multi-threaded rasterization.
+     * @param rasterThreads The number of threads to use.
+     */
     public void setRasterThreads(int rasterThreads) {
         this.rasterThreads = rasterThreads;
     }
 
+    /**
+     * Set the background. Can be used when rasterizing to an image format that
+     * supports transparency.
+     * @param rasterBackground The raster background.
+     */
     public void setRasterBackground(RasterBackground rasterBackground) {
         this.rasterBackground = rasterBackground;
     }
     //endregion
 
     //region Additional options.
+    /**
+     * Specify additional Prince command-line options.
+     * @param key The command-line option.
+     */
     public void addOption(String key) {
         this.options.put(key, null);
     }
 
+    /**
+     * Specify additional Prince command-line options.
+     * @param key The command-line option key.
+     * @param value The command-line option value.
+     */
     public void addOption(String key, String value) {
         this.options.put(key, value);
     }
 
+    /**
+     * Clear the additional command-line options accumulated by calling
+     * {@link #addOption(String)} or {@link #addOption(String, String)}.
+     */
     public void clearOptions() {
         this.options.clear();
     }
