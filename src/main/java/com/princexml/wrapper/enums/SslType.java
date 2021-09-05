@@ -9,7 +9,9 @@ package com.princexml.wrapper.enums;
  * SSL file type.
  */
 public enum SslType {
+    /** Equates to the string {@code "PEM"}. */
     PEM("PEM"),
+    /** Equates to the string {@code "DER"}. */
     DER("DER");
 
     private final String sslType;

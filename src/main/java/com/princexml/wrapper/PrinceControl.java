@@ -15,34 +15,55 @@ import java.util.List;
 
 import static com.princexml.wrapper.CommandLine.toCommand;
 
+/**
+ * Class for creating persistent Prince control processes that can be used
+ * for multiple consecutive document conversions.
+ */
 public class PrinceControl extends AbstractPrince {
     private Process process;
     private String version;
     private final List<String> inputPaths;
     private final List<byte[]> resources;
 
+    /**
+     * Constructor for {@code PrinceControl}.
+     * @param princePath The path of the Prince executable. For example, this may be
+     *                   <code>C:\Program&#xA0;Files\Prince\engine\bin\prince.exe</code>
+     *                   on Windows or <code>/usr/bin/prince</code> on Linux.
+     */
     public PrinceControl(String princePath) {
         this(princePath, null);
     }
 
+    /**
+     * Constructor for {@code PrinceControl}.
+     * @param princePath The path of the Prince executable. For example, this may be
+     *                   <code>C:\Program&#xA0;Files\Prince\engine\bin\prince.exe</code>
+     *                   on Windows or <code>/usr/bin/prince</code> on Linux.
+     * @param events An implementation of {@link com.princexml.wrapper.events.PrinceEvents}
+     *               that will receive messages returned from Prince.
+     */
     public PrinceControl(String princePath, PrinceEvents events) {
         super(princePath, events);
         this.inputPaths = new ArrayList<>();
         this.resources = new ArrayList<>();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convert(String inputPath, OutputStream output) throws IOException {
         inputPaths.add(inputPath);
         return convert(output);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convert(List<String> inputPaths, OutputStream output) throws IOException {
         this.inputPaths.addAll(inputPaths);
         return convert(output);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convert(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
@@ -56,6 +77,7 @@ public class PrinceControl extends AbstractPrince {
         return convert(output);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean convertString(String input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
@@ -97,6 +119,11 @@ public class PrinceControl extends AbstractPrince {
         }
     }
 
+    /**
+     * Start a Prince control process that can be used for multiple consecutive
+     * document conversions.
+     * @throws IOException If an I/O error occurs.
+     */
     public void start() throws IOException {
         if (process != null) {
             throw new RuntimeException("control process has already been started");
@@ -119,6 +146,10 @@ public class PrinceControl extends AbstractPrince {
         }
     }
 
+    /**
+     * Stop the Prince control process.
+     * @throws IOException If an I/O error occurs.
+     */
     public void stop() throws IOException {
         if (process == null) {
             throw new RuntimeException("control process has not been started");
@@ -220,20 +251,38 @@ public class PrinceControl extends AbstractPrince {
         return json.toString();
     }
 
+    /**
+     * Get the version string for the running Prince process.
+     * @return The version string.
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * See {@link #addScript(String)}.
+     * @param script The script to run.
+     */
     public void addScript(byte[] script) {
         resources.add(script);
         super.addScript("job-resource:" + (resources.size() - 1));
     }
 
+    /**
+     * See {@link #addStyleSheet(String)}.
+     * @param styleSheet The stylesheet to apply.
+     */
     public void addStyleSheet(byte[] styleSheet) {
         resources.add(styleSheet);
         super.addStyleSheet("job-resource:" + (resources.size() - 1));
     }
 
+    /**
+     * See {@link #addFileAttachment(String)}.
+     * @param attachment The file to attach.
+     * @param filename The file name.
+     * @param description The file's description.
+     */
     public void addFileAttachment(byte[] attachment, String filename, String description) {
         resources.add(attachment);
         super.fileAttachments.add(new FileAttachment(
