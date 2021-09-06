@@ -305,7 +305,7 @@ public class Prince extends AbstractPrince {
         if (rasterThreads > -1) { cmdLine.add(toCommand("raster-threads", rasterThreads)); }
         if (rasterBackground != null) { cmdLine.add(toCommand("raster-background", rasterBackground)); }
 
-        options.forEach((k, v) -> cmdLine.add(toCommand(k, v)));
+        options.forEach((k, v) -> cmdLine.add(v == null ? toCommand(k) : toCommand(k, v)));
 
         return cmdLine;
     }
@@ -388,6 +388,10 @@ public class Prince extends AbstractPrince {
     //endregion
 
     //region Additional options.
+    public void addOption(String key) {
+        this.options.put(key, null);
+    }
+
     public void addOption(String key, String value) {
         this.options.put(key, value);
     }
