@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 YesLogic Pty. Ltd.
+ * Copyright (C) 2005-2006, 2010, 2012, 2014-2015, 2018, 2021 YesLogic Pty. Ltd.
  * All rights reserved.
  */
 
