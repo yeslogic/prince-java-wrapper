@@ -31,7 +31,7 @@ public class Prince extends AbstractPrince {
     // Raster output options.
     private RasterFormat rasterFormat;
     private int rasterJpegQuality = -1;
-    private int rasterPages;
+    private int rasterPage;
     private int rasterDpi;
     private int rasterThreads = -1;
     private RasterBackground rasterBackground;
@@ -164,8 +164,8 @@ public class Prince extends AbstractPrince {
     }
 
     public boolean rasterize(List<String> inputPaths, OutputStream output) throws IOException {
-        if (rasterPages < 1) {
-            throw new RuntimeException("rasterPages has to be set to a value > 0");
+        if (rasterPage < 1) {
+            throw new RuntimeException("rasterPage has to be set to a value > 0");
         }
         if (rasterFormat == null || rasterFormat == RasterFormat.AUTO) {
             throw new RuntimeException("rasterFormat has to be set to JPEG or PNG");
@@ -188,8 +188,8 @@ public class Prince extends AbstractPrince {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
-        if (rasterPages < 1) {
-            throw new RuntimeException("rasterPages has to be set to a value > 0");
+        if (rasterPage < 1) {
+            throw new RuntimeException("rasterPage has to be set to a value > 0");
         }
         if (rasterFormat == null || rasterFormat == RasterFormat.AUTO) {
             throw new RuntimeException("rasterFormat has to be set to JPEG or PNG");
@@ -300,7 +300,7 @@ public class Prince extends AbstractPrince {
 
         if (rasterFormat != null) { cmdLine.add(toCommand("raster-format", rasterFormat)); }
         if (rasterJpegQuality > -1) { cmdLine.add(toCommand("raster-jpeg-quality", rasterJpegQuality)); }
-        if (rasterPages > 0) { cmdLine.add(toCommand("raster-pages", rasterPages)); }
+        if (rasterPage > 0) { cmdLine.add(toCommand("raster-pages", rasterPage)); }
         if (rasterDpi > 0) { cmdLine.add(toCommand("raster-dpi", rasterDpi)); }
         if (rasterThreads > -1) { cmdLine.add(toCommand("raster-threads", rasterThreads)); }
         if (rasterBackground != null) { cmdLine.add(toCommand("raster-background", rasterBackground)); }
@@ -364,11 +364,11 @@ public class Prince extends AbstractPrince {
         this.rasterJpegQuality = rasterJpegQuality;
     }
 
-    public void setRasterPages(int rasterPages) {
-        if (rasterPages < 1) {
-            throw new IllegalArgumentException("invalid rasterPages value (must be > 0)");
+    public void setRasterPage(int rasterPage) {
+        if (rasterPage < 1) {
+            throw new IllegalArgumentException("invalid rasterPage value (must be > 0)");
         }
-        this.rasterPages = rasterPages;
+        this.rasterPage = rasterPage;
     }
 
     public void setRasterDpi(int rasterDpi) {
