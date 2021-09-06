@@ -16,4 +16,12 @@ public interface PrinceEvents {
      * @param msgText The text of the message.
      */
     void onMessage(MessageType msgType, String msgLocation, String msgText);
+
+    /**
+     * This method will be called when a data message is received from Prince
+     * via the use of {@code Log.data("name", "value")}.
+     * @param name The name of the data message.
+     * @param value The value of the data message.
+     */
+    void onDataMessage(String name, String value);
 }

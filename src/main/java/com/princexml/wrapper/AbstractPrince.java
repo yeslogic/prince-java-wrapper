@@ -173,8 +173,8 @@ abstract class AbstractPrince {
 
                 if (events != null && msgTag.equals("msg")) {
                     handleMessage(msgBody);
-                } else if (msgTag.equals("dat")) {
-                    // TODO Data messages?
+                } else if (events != null && msgTag.equals("dat")) {
+                    handleDataMessage(msgBody);
                 } else if (msgTag.equals("fin")) {
                     result = msgBody;
                 }
@@ -194,6 +194,16 @@ abstract class AbstractPrince {
             String msgText = tokens[2];
 
             events.onMessage(msgType, msgLocation, msgText);
+        }
+    }
+
+    private void handleDataMessage(String msgBody) {
+        String[] tokens = msgBody.split("\\|", 2);
+        if (tokens.length == 2) {
+            String name = tokens[0];
+            String value = tokens[1];
+
+            events.onDataMessage(name, value);
         }
     }
 
