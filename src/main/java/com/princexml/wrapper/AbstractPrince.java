@@ -116,13 +116,13 @@ abstract class AbstractPrince {
         this.events = events;
     }
 
-    public abstract boolean convert(String xmlPath, OutputStream out) throws IOException;
+    public abstract boolean convert(String inputPath, OutputStream output) throws IOException;
 
-    public abstract boolean convert(List<String> xmlPaths, OutputStream out) throws IOException;
+    public abstract boolean convert(List<String> inputPaths, OutputStream output) throws IOException;
 
-    public abstract boolean convert(InputStream in, OutputStream out) throws IOException;
+    public abstract boolean convert(InputStream input, OutputStream output) throws IOException;
 
-    public abstract boolean convertString(String xml, OutputStream out) throws IOException;
+    public abstract boolean convertString(String input, OutputStream output) throws IOException;
 
     protected List<String> getBaseCommandLine() {
         List<String> cmdLine = new ArrayList<>();
