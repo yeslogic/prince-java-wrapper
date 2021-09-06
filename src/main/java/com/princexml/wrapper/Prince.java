@@ -141,15 +141,15 @@ public class Prince extends AbstractPrince {
         return result;
     }
 
-    public boolean rasterise(String inputPath, String outputPath) throws IOException {
-        return rasteriseInternal(Collections.singletonList(inputPath), outputPath);
+    public boolean rasterize(String inputPath, String outputPath) throws IOException {
+        return rasterizeInternal(Collections.singletonList(inputPath), outputPath);
     }
 
-    public boolean rasterise(List<String> inputPaths, String outputPath) throws IOException {
-        return rasteriseInternal(inputPaths, outputPath);
+    public boolean rasterize(List<String> inputPaths, String outputPath) throws IOException {
+        return rasterizeInternal(inputPaths, outputPath);
     }
 
-    private boolean rasteriseInternal(List<String> inputPaths, String outputPath) throws IOException {
+    private boolean rasterizeInternal(List<String> inputPaths, String outputPath) throws IOException {
         List<String> cmdLine = getJobCommandLine("normal");
         cmdLine.addAll(inputPaths);
         cmdLine.add(toCommand("raster-output", outputPath));
@@ -159,11 +159,11 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasterise(String inputPath, OutputStream output) throws IOException {
-        return rasterise(Collections.singletonList(inputPath), output);
+    public boolean rasterize(String inputPath, OutputStream output) throws IOException {
+        return rasterize(Collections.singletonList(inputPath), output);
     }
 
-    public boolean rasterise(List<String> inputPaths, OutputStream output) throws IOException {
+    public boolean rasterize(List<String> inputPaths, OutputStream output) throws IOException {
         if (rasterPages < 1) {
             throw new RuntimeException("rasterPages has to be set to a value > 0");
         }
@@ -184,7 +184,7 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasterise(InputStream input, OutputStream output) throws IOException {
+    public boolean rasterize(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
@@ -212,7 +212,7 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasteriseString(String input, String outputPath) throws IOException {
+    public boolean rasterizeString(String input, String outputPath) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
@@ -230,10 +230,10 @@ public class Prince extends AbstractPrince {
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasteriseString(String input, OutputStream output) throws IOException {
+    public boolean rasterizeString(String input, OutputStream output) throws IOException {
         InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 
-        boolean result = rasterise(in, output);
+        boolean result = rasterize(in, output);
         in.close();
 
         return result;
