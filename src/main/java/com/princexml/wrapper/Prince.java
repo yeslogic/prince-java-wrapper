@@ -47,23 +47,23 @@ public class Prince extends AbstractPrince {
         super(princePath, events);
     }
 
-    public boolean convert(String xmlPath) throws IOException {
-        return convertInternal(Collections.singletonList(xmlPath), null);
+    public boolean convert(String inputPath) throws IOException {
+        return convertInternal(Collections.singletonList(inputPath), null);
     }
 
-    public boolean convert(String xmlPath, String pdfPath) throws IOException {
-        return convertInternal(Collections.singletonList(xmlPath), pdfPath);
+    public boolean convert(String inputPath, String outputPath) throws IOException {
+        return convertInternal(Collections.singletonList(inputPath), outputPath);
     }
 
-    public boolean convert(List<String> xmlPaths, String pdfPath) throws IOException {
-        return convertInternal(xmlPaths, pdfPath);
+    public boolean convert(List<String> inputPaths, String outputPath) throws IOException {
+        return convertInternal(inputPaths, outputPath);
     }
 
-    private boolean convertInternal(List<String> xmlPaths, String pdfPath) throws IOException {
+    private boolean convertInternal(List<String> inputPaths, String outputPath) throws IOException {
         List<String> cmdLine = getJobCommandLine("normal");
-        cmdLine.addAll(xmlPaths);
-        if (pdfPath != null) {
-            cmdLine.add(toCommand("output", pdfPath));
+        cmdLine.addAll(inputPaths);
+        if (outputPath != null) {
+            cmdLine.add(toCommand("output", outputPath));
         }
 
         Process process = Util.invokeProcess(cmdLine);
@@ -72,27 +72,27 @@ public class Prince extends AbstractPrince {
     }
 
     @Override
-    public boolean convert(String xmlPath, OutputStream out) throws IOException {
-        return convert(Collections.singletonList(xmlPath), out);
+    public boolean convert(String inputPath, OutputStream output) throws IOException {
+        return convert(Collections.singletonList(inputPath), output);
     }
 
     @Override
-    public boolean convert(List<String> xmlPaths, OutputStream out) throws IOException {
+    public boolean convert(List<String> inputPaths, OutputStream output) throws IOException {
         List<String> cmdLine = getJobCommandLine("buffered");
-        cmdLine.addAll(xmlPaths);
+        cmdLine.addAll(inputPaths);
         cmdLine.add(toCommand("output", "-"));
 
         Process process = Util.invokeProcess(cmdLine);
         InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(fromPrince, out);
+        Util.copyInputToOutput(fromPrince, output);
         fromPrince.close();
 
         return readMessagesFromStderr(process);
     }
 
     @Override
-    public boolean convert(InputStream in, OutputStream out) throws IOException {
+    public boolean convert(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
@@ -104,66 +104,66 @@ public class Prince extends AbstractPrince {
         OutputStream toPrince = process.getOutputStream();
         InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(in, toPrince);
+        Util.copyInputToOutput(input, toPrince);
         toPrince.close();
 
-        Util.copyInputToOutput(fromPrince, out);
+        Util.copyInputToOutput(fromPrince, output);
         fromPrince.close();
 
         return readMessagesFromStderr(process);
     }
 
-    public boolean convertString(String xml, String pdfPath) throws IOException {
+    public boolean convertString(String input, String outputPath) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
 
         List<String> cmdLine = getJobCommandLine("buffered");
-        cmdLine.add(toCommand("output", pdfPath));
+        cmdLine.add(toCommand("output", outputPath));
         cmdLine.add("-");
 
         Process process = Util.invokeProcess(cmdLine);
         OutputStream toPrince = process.getOutputStream();
 
-        toPrince.write(xml.getBytes(StandardCharsets.UTF_8));
+        toPrince.write(input.getBytes(StandardCharsets.UTF_8));
         toPrince.close();
 
         return readMessagesFromStderr(process);
     }
 
     @Override
-    public boolean convertString(String xml, OutputStream out) throws IOException {
-        InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+    public boolean convertString(String input, OutputStream output) throws IOException {
+        InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 
-        boolean result = convert(in, out);
+        boolean result = convert(in, output);
         in.close();
 
         return result;
     }
 
-    public boolean rasterise(String xmlPath, String pdfPath) throws IOException {
-        return rasteriseInternal(Collections.singletonList(xmlPath), pdfPath);
+    public boolean rasterise(String inputPath, String outputPath) throws IOException {
+        return rasteriseInternal(Collections.singletonList(inputPath), outputPath);
     }
 
-    public boolean rasterise(List<String> xmlPaths, String pdfPath) throws IOException {
-        return rasteriseInternal(xmlPaths, pdfPath);
+    public boolean rasterise(List<String> inputPaths, String outputPath) throws IOException {
+        return rasteriseInternal(inputPaths, outputPath);
     }
 
-    private boolean rasteriseInternal(List<String> xmlPaths, String rasterPath) throws IOException {
+    private boolean rasteriseInternal(List<String> inputPaths, String outputPath) throws IOException {
         List<String> cmdLine = getJobCommandLine("normal");
-        cmdLine.addAll(xmlPaths);
-        cmdLine.add(toCommand("raster-output", rasterPath));
+        cmdLine.addAll(inputPaths);
+        cmdLine.add(toCommand("raster-output", outputPath));
 
         Process process = Util.invokeProcess(cmdLine);
 
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasterise(String xmlPath, OutputStream out) throws IOException {
-        return rasterise(Collections.singletonList(xmlPath), out);
+    public boolean rasterise(String inputPath, OutputStream output) throws IOException {
+        return rasterise(Collections.singletonList(inputPath), output);
     }
 
-    public boolean rasterise(List<String> xmlPaths, OutputStream out) throws IOException {
+    public boolean rasterise(List<String> inputPaths, OutputStream output) throws IOException {
         if (rasterPages < 1) {
             throw new RuntimeException("rasterPages has to be set to a value > 0");
         }
@@ -172,19 +172,19 @@ public class Prince extends AbstractPrince {
         }
 
         List<String> cmdLine = getJobCommandLine("buffered");
-        cmdLine.addAll(xmlPaths);
+        cmdLine.addAll(inputPaths);
         cmdLine.add(toCommand("raster-output", "-"));
 
         Process process = Util.invokeProcess(cmdLine);
         InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(fromPrince, out);
+        Util.copyInputToOutput(fromPrince, output);
         fromPrince.close();
 
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasterise(InputStream in, OutputStream out) throws IOException {
+    public boolean rasterise(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
@@ -203,37 +203,37 @@ public class Prince extends AbstractPrince {
         OutputStream toPrince = process.getOutputStream();
         InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(in, toPrince);
+        Util.copyInputToOutput(input, toPrince);
         toPrince.close();
 
-        Util.copyInputToOutput(fromPrince, out);
+        Util.copyInputToOutput(fromPrince, output);
         fromPrince.close();
 
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasteriseString(String xml, String rasterPath) throws IOException {
+    public boolean rasteriseString(String input, String outputPath) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
 
         List<String> cmdLine = getJobCommandLine("buffered");
-        cmdLine.add(toCommand("raster-output", rasterPath));
+        cmdLine.add(toCommand("raster-output", outputPath));
         cmdLine.add("-");
 
         Process process = Util.invokeProcess(cmdLine);
         OutputStream toPrince = process.getOutputStream();
 
-        toPrince.write(xml.getBytes(StandardCharsets.UTF_8));
+        toPrince.write(input.getBytes(StandardCharsets.UTF_8));
         toPrince.close();
 
         return readMessagesFromStderr(process);
     }
 
-    public boolean rasteriseString(String xml, OutputStream out) throws IOException {
-        InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+    public boolean rasteriseString(String input, OutputStream output) throws IOException {
+        InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 
-        boolean result = rasterise(in, out);
+        boolean result = rasterise(in, output);
         in.close();
 
         return result;

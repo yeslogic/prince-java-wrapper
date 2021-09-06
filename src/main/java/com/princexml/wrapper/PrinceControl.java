@@ -18,7 +18,7 @@ import static com.princexml.wrapper.CommandLine.toCommand;
 public class PrinceControl extends AbstractPrince {
     private Process process;
     private String version;
-    private final List<String> xmlPaths;
+    private final List<String> inputPaths;
     private final List<byte[]> resources;
 
     public PrinceControl(String princePath) {
@@ -27,46 +27,46 @@ public class PrinceControl extends AbstractPrince {
 
     public PrinceControl(String princePath, PrinceEvents events) {
         super(princePath, events);
-        this.xmlPaths = new ArrayList<>();
+        this.inputPaths = new ArrayList<>();
         this.resources = new ArrayList<>();
     }
 
     @Override
-    public boolean convert(String xmlPath, OutputStream out) throws IOException {
-        xmlPaths.add(xmlPath);
-        return convert(out);
+    public boolean convert(String inputPath, OutputStream output) throws IOException {
+        inputPaths.add(inputPath);
+        return convert(output);
     }
 
     @Override
-    public boolean convert(List<String> xmlPaths, OutputStream out) throws IOException {
-        this.xmlPaths.addAll(xmlPaths);
-        return convert(out);
+    public boolean convert(List<String> inputPaths, OutputStream output) throws IOException {
+        this.inputPaths.addAll(inputPaths);
+        return convert(output);
     }
 
     @Override
-    public boolean convert(InputStream in, OutputStream out) throws IOException {
+    public boolean convert(InputStream input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Util.copyInputToOutput(in, baos);
+        Util.copyInputToOutput(input, baos);
         addResource(baos.toByteArray());
 
-        return convert(out);
+        return convert(output);
     }
 
     @Override
-    public boolean convertString(String xml, OutputStream out) throws IOException {
+    public boolean convertString(String input, OutputStream output) throws IOException {
         if (inputType == null || inputType == InputType.AUTO) {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
 
-        addResource(xml.getBytes(StandardCharsets.UTF_8));
-        return convert(out);
+        addResource(input.getBytes(StandardCharsets.UTF_8));
+        return convert(output);
     }
 
-    private boolean convert(OutputStream out) throws IOException {
+    private boolean convert(OutputStream output) throws IOException {
         if (process == null) {
             throw new RuntimeException("control process has not been started");
         }
@@ -82,7 +82,7 @@ public class PrinceControl extends AbstractPrince {
 
         Chunk chunk = Chunk.readChunk(fromPrince);
         if (chunk.getTag().equals("pdf")) {
-            out.write(chunk.getBytes());
+            output.write(chunk.getBytes());
             chunk = Chunk.readChunk(fromPrince);
         }
 
@@ -141,7 +141,7 @@ public class PrinceControl extends AbstractPrince {
         json.beginObj("input");
 
         json.beginList("src");
-        xmlPaths.forEach(json::value);
+        inputPaths.forEach(json::value);
         json.endList();
 
         if (inputType != null) { json.field("type", inputType.toString()); }
@@ -245,6 +245,6 @@ public class PrinceControl extends AbstractPrince {
 
     private void addResource(byte[] resource) {
         resources.add(resource);
-        xmlPaths.add("job-resource:" + (resources.size() - 1));
+        inputPaths.add("job-resource:" + (resources.size() - 1));
     }
 }
