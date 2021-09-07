@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 import static com.princexml.wrapper.CommandLine.*;
 
 /**
- * The main Prince class.
+ * Class that provides the default interface to Prince, where each document
+ * conversion invokes a new Prince process.
  */
 public class Prince extends AbstractPrince {
     // Input options.
@@ -229,7 +230,7 @@ public class Prince extends AbstractPrince {
 
     /**
      * Rasterize an XML or HTML file. This method is useful for servlets as it
-     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * allows Prince to write the raster output directly to the {@code OutputStream}
      * of the servlet response.
      * @param inputPath The filename of the input XML or HTML document.
      * @param output The OutputStream to which Prince will write the raster output.
@@ -242,7 +243,7 @@ public class Prince extends AbstractPrince {
 
     /**
      * Rasterize multiple XML or HTML files. This method is useful for servlets as it
-     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * allows Prince to write the raster output directly to the {@code OutputStream}
      * of the servlet response.
      * @param inputPaths The filenames of the input XML or HTML documents.
      * @param output The OutputStream to which Prince will write the raster output.
@@ -272,7 +273,7 @@ public class Prince extends AbstractPrince {
 
     /**
      * Rasterize an XML or HTML stream. This method is useful for servlets as it
-     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * allows Prince to write the raster output directly to the {@code OutputStream}
      * of the servlet response.
      * @param input The InputStream from which Prince will read the XML or HTML
      *              document.
@@ -337,7 +338,7 @@ public class Prince extends AbstractPrince {
 
     /**
      * Rasterize an XML or HTML string. This method is useful for servlets as it
-     * allows Prince to write the PDF output directly to the {@code OutputStream}
+     * allows Prince to write the raster output directly to the {@code OutputStream}
      * of the servlet response.
      * @param input The XML or HTML document in the form of a String.
      * @param output The OutputStream to which Prince will write the raster output.
@@ -434,7 +435,8 @@ public class Prince extends AbstractPrince {
      * Rather than retrieving documents beginning with {@code URL}, get them
      * from the local directory {@code DIR}. This method can be called more than
      * once to add multiple remappings.
-     * @param remap The remapping "URL=DIR".
+     * @param remap The remapping string in the format "URL=DIR"
+     *              (e.g. "http://example/=../images").
      */
     public void addRemap(String remap) {
         this.remaps.add(remap);
@@ -448,7 +450,7 @@ public class Prince extends AbstractPrince {
     }
 
     /**
-     * Disable access to local files. Enabled by default unless explicitly disabled.
+     * Disable access to local files. Default value is {@code false}.
      * @param noLocalFiles true to disable local files.
      */
     public void setNoLocalFiles(boolean noLocalFiles) {
@@ -476,8 +478,8 @@ public class Prince extends AbstractPrince {
 
     //region PDF output options.
     /**
-     * Disable system fonts in the PDF output. Only fonts defined with {@code font-face}
-     * rules in CSS will be available. Enabled by default unless explicitly disabled.
+     * Disable the use of system fonts. Only fonts defined with {@code font-face}
+     * rules in CSS will be available. Default value is {@code false}.
      * @param noSystemFonts true to disable system fonts.
      */
     public void setNoSystemFonts(boolean noSystemFonts) {
@@ -485,8 +487,8 @@ public class Prince extends AbstractPrince {
     }
 
     /**
-     * Changes the DPI of the "px" units in CSS, which defaults to 96 dpi.
-     * @param cssDpi The DPI of the "px" units.
+     * Changes the DPI of the "px" units in CSS. Default value is 96 dpi.
+     * @param cssDpi The DPI of the "px" units. Value must be greater than 0.
      */
     public void setCssDpi(int cssDpi) {
         if (cssDpi < 1) {
@@ -498,7 +500,8 @@ public class Prince extends AbstractPrince {
 
     //region Raster output options.
     /**
-     * Specify the format for the raster output.
+     * Specify the format for the raster output. Default value is
+     * {@link com.princexml.wrapper.enums.RasterFormat#AUTO}.
      * @param rasterFormat The format for the raster output.
      */
     public void setRasterFormat(RasterFormat rasterFormat) {
@@ -507,7 +510,9 @@ public class Prince extends AbstractPrince {
 
     /**
      * Specify the level of JPEG compression when generating raster output in JPEG format.
-     * @param rasterJpegQuality The level of JPEG compression.
+     * Default value is 92 percent.
+     * @param rasterJpegQuality The level of JPEG compression. Valid range is between 0
+     *                          and 100 inclusive.
      */
     public void setRasterJpegQuality(int rasterJpegQuality) {
         if (rasterJpegQuality < 0 || rasterJpegQuality > 100) {
@@ -517,8 +522,8 @@ public class Prince extends AbstractPrince {
     }
 
     /**
-     * Set the page to be rasterized.
-     * @param rasterPage The page to be rasterized.
+     * Set the page number to be rasterized. Defaults to rasterizing all pages.
+     * @param rasterPage The page number to be rasterized. Value must be greater than 0.
      */
     public void setRasterPage(int rasterPage) {
         if (rasterPage < 1) {
@@ -528,8 +533,8 @@ public class Prince extends AbstractPrince {
     }
 
     /**
-     * Specify the resolution of raster output.
-     * @param rasterDpi The raster output resolution.
+     * Specify the resolution of raster output. Default value is 96 dpi.
+     * @param rasterDpi The raster output resolution. Value must be greater than 0.
      */
     public void setRasterDpi(int rasterDpi) {
         if (rasterDpi < 1) {
@@ -539,7 +544,8 @@ public class Prince extends AbstractPrince {
     }
 
     /**
-     * Set the number of threads to use for multi-threaded rasterization.
+     * Set the number of threads to use for multi-threaded rasterization. Default
+     * value is the number of cores and hyperthreads the system provides.
      * @param rasterThreads The number of threads to use.
      */
     public void setRasterThreads(int rasterThreads) {
@@ -548,7 +554,7 @@ public class Prince extends AbstractPrince {
 
     /**
      * Set the background. Can be used when rasterizing to an image format that
-     * supports transparency.
+     * supports transparency. Default value is {@link com.princexml.wrapper.enums.RasterBackground#WHITE}.
      * @param rasterBackground The raster background.
      */
     public void setRasterBackground(RasterBackground rasterBackground) {
