@@ -171,12 +171,20 @@ abstract class AbstractPrince {
                 String msgTag = tokens[0];
                 String msgBody = tokens[1];
 
-                if (events != null && msgTag.equals("msg")) {
-                    handleMessage(msgBody);
-                } else if (events != null && msgTag.equals("dat")) {
-                    handleDataMessage(msgBody);
-                } else if (msgTag.equals("fin")) {
-                    result = msgBody;
+                switch (msgTag) {
+                    case "msg":
+                        if (events != null) {
+                            handleMessage(msgBody);
+                        }
+                        break;
+                    case "dat":
+                        if (events != null) {
+                            handleDataMessage(msgBody);
+                        }
+                        break;
+                    case "fin":
+                        result = msgBody;
+                        break;
                 }
             }
 
