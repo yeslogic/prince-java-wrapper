@@ -258,7 +258,7 @@ abstract class AbstractPrince {
 
     //region Logging options.
     /**
-     * Enable logging of informative messages.
+     * Enable logging of informative messages. Default value is {@code false}.
      * @param verbose true to enable verbose logging.
      */
     public void setVerbose(boolean verbose) {
@@ -266,7 +266,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Enable logging of debug messages.
+     * Enable logging of debug messages. Default value is {@code false}.
      * @param debug true to enable debug logging.
      */
     public void setDebug(boolean debug) {
@@ -285,8 +285,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disable warnings about unknown CSS features. Enabled by default unless
-     * explicitly disabled.
+     * Disable warnings about unknown CSS features. Default value is {@code false}.
      * @param noWarnCssUnknown true to disable warnings.
      */
     public void setNoWarnCssUnknown(boolean noWarnCssUnknown) {
@@ -294,8 +293,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disable warnings about unsupported CSS features. Enabled by default
-     * unless explicitly disabled.
+     * Disable warnings about unsupported CSS features. Default value is {@code false}.
      * @param noWarnCssUnsupported true to disable warnings.
      */
     public void setNoWarnCssUnsupported(boolean noWarnCssUnsupported) {
@@ -305,7 +303,8 @@ abstract class AbstractPrince {
 
     //region Input options.
     /**
-     * Specify the input type of the document.
+     * Specify the input type of the document. Default value is
+     * {@link com.princexml.wrapper.enums.InputType#AUTO}.
      * <p>
      * Setting this to {@link com.princexml.wrapper.enums.InputType#XML} or
      * {@link com.princexml.wrapper.enums.InputType#HTML} is required if a
@@ -334,7 +333,8 @@ abstract class AbstractPrince {
     /**
      * Enable XInclude and XML external entities (XXE). Note that XInclude only
      * applies to XML files. To apply it to HTML files, the input format needs
-     * to be specified with {@link #setInputType(InputType)}.
+     * to be specified with {@link #setInputType(InputType)}. Default value is
+     * {@code false}.
      * @param xInclude true to enable XInclude and XXE.
      */
     public void setXInclude(boolean xInclude) {
@@ -342,7 +342,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Enable XML external entities (XXE).
+     * Enable XML external entities (XXE). Default value is {@code false}.
      * @param xmlExternalEntities true to enable XXE.
      */
     public void setXmlExternalEntities(boolean xmlExternalEntities) {
@@ -352,8 +352,7 @@ abstract class AbstractPrince {
 
     //region Network options.
     /**
-     * Disable network access (prevents HTTP downloads). Enabled by default
-     * unless explicitly disabled.
+     * Disable network access (prevents HTTP downloads). Default value is {@code false}.
      * @param noNetwork true to disable network access.
      */
     public void setNoNetwork(boolean noNetwork) {
@@ -361,8 +360,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disable all HTTP and HTTPS redirects. Enabled by default unless explicitly
-     * disabled.
+     * Disable all HTTP and HTTPS redirects. Default value is {@code false}.
      * @param noRedirects true to disable redirects.
      */
     public void setNoRedirects(boolean noRedirects) {
@@ -388,7 +386,7 @@ abstract class AbstractPrince {
     /**
      * Send username and password credentials to the specified server only.
      * The default is to send them to any server which challenges for authentication.
-     * @param authServer The server to send credentials to.
+     * @param authServer The server to send credentials to (e.g. "localhost:8001").
      */
     public void setAuthServer(String authServer) {
         this.authServer = authServer;
@@ -421,8 +419,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Do not authenticate with named servers until asked. Enabled by default
-     * unless explicitly disabled.
+     * Do not authenticate with named servers until asked. Default value is {@code false}.
      * @param noAuthPreemptive true to disable authentication preemptive.
      */
     public void setNoAuthPreemptive(boolean noAuthPreemptive) {
@@ -438,8 +435,8 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Specify the timeout for HTTP requests.
-     * @param httpTimeout The HTTP timeout in seconds.
+     * Specify the timeout for HTTP requests. Default value is 60 seconds.
+     * @param httpTimeout The HTTP timeout in seconds. Value must be greater than 0.
      */
     public void setHttpTimeout(int httpTimeout) {
         if (httpTimeout < 1) {
@@ -534,7 +531,8 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Set the minimum version of SSL to allow.
+     * Set the minimum version of SSL to allow. Default value is
+     * {@link com.princexml.wrapper.enums.SslVersion#DEFAULT}.
      * @param sslVersion The minimum version to allow.
      */
     public void setSslVersion(SslVersion sslVersion) {
@@ -542,8 +540,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Specify whether to disable SSL verification. Enabled by default unless
-     * explicitly disabled.
+     * Specify whether to disable SSL verification. Default value is {@code false}.
      * @param insecure true to disable SSL verification (not recommended).
      */
     public void setInsecure(boolean insecure) {
@@ -551,8 +548,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disable downloading multiple HTTP resources at once. Enabled by default
-     * unless explicitly disabled.
+     * Disable downloading multiple HTTP resources at once. Default value is {@code false}.
      * @param noParallelDownloads true to disable parallel downloads.
      */
     public void setNoParallelDownloads(boolean noParallelDownloads) {
@@ -562,7 +558,8 @@ abstract class AbstractPrince {
 
     //region JavaScript options.
     /**
-     * Specify whether JavaScript found in documents should be run.
+     * Specify whether JavaScript found in documents should be run. Default value is
+     * {@code false}.
      * @param javaScript true if document scripts should be run.
      */
     public void setJavaScript(boolean javaScript) {
@@ -586,8 +583,9 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Defines the maximum number of consequent layout passes.
-     * @param maxPasses The number of maximum passes.
+     * Defines the maximum number of consequent layout passes. Default value is
+     * unlimited passes.
+     * @param maxPasses The number of maximum passes. Value must be greater than 0.
      */
     public void setMaxPasses(int maxPasses) {
         if (maxPasses < 1) {
@@ -616,7 +614,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Specify the media type.
+     * Specify the media type. Default value is {@code "print"}.
      * @param media The media type (e.g. "print", "screen").
      */
     public void setMedia(String media) {
@@ -624,7 +622,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Ignore author style sheets. Enabled by default unless explicitly disabled.
+     * Ignore author style sheets. Default value is {@code false}.
      * @param noAuthorStyle true to ignore author style sheets.
      */
     public void setNoAuthorStyle(boolean noAuthorStyle) {
@@ -632,7 +630,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Ignore default style sheets. Enabled by default unless explicitly disabled.
+     * Ignore default style sheets. Default value is {@code false}.
      * @param noDefaultStyle true to ignore default style sheets.
      */
     public void setNoDefaultStyle(boolean noDefaultStyle) {
@@ -691,7 +689,7 @@ abstract class AbstractPrince {
 
     /**
      * Specify whether artificial bold/italic fonts should be generated if
-     * necessary. Enabled by default unless explicitly disabled.
+     * necessary. Default value is {@code false}.
      * @param noArtificialFonts true to disable artificial bold/italic fonts.
      */
     public void setNoArtificialFonts(boolean noArtificialFonts) {
@@ -699,8 +697,8 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Specify whether fonts should be embedded in the output PDF file. Enabled
-     * by default unless explicitly disabled.
+     * Specify whether fonts should be embedded in the output PDF file. Default
+     * value is {@code false}.
      * @param noEmbedFonts true to disable PDF font embedding.
      */
     public void setNoEmbedFonts(boolean noEmbedFonts) {
@@ -709,7 +707,7 @@ abstract class AbstractPrince {
 
     /**
      * Specify whether embedded fonts should be subset in the output PDF file.
-     * Enabled by default unless explicitly disabled.
+     * Default value is {@code false}.
      * @param noSubsetFonts true to disable PDF font subsetting.
      */
     public void setNoSubsetFonts(boolean noSubsetFonts) {
@@ -719,7 +717,7 @@ abstract class AbstractPrince {
     /**
      * Ensure that all fonts are encoded in the PDF using their identity encoding
      * (directly mapping to glyph indices), even if they could have used MacRoman
-     * or some other encoding.
+     * or some other encoding. Default value is {@code false}.
      * @param forceIdentityEncoding true to force identity encoding.
      */
     public void setForceIdentityEncoding(boolean forceIdentityEncoding) {
@@ -728,7 +726,7 @@ abstract class AbstractPrince {
 
     /**
      * Specify whether compression should be applied to the output PDF file.
-     * Enabled by default unless explicitly disabled.
+     * Default value is {@code false}.
      * @param noCompress true to disable PDF compression.
      */
     public void setNoCompress(boolean noCompress) {
@@ -736,7 +734,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disable PDF object streams. Enabled by default unless explicitly disabled.
+     * Disable PDF object streams. Default value is {@code false}.
      * @param noObjectStreams true to disable PDF object streams.
      */
     public void setNoObjectStreams(boolean noObjectStreams) {
@@ -744,7 +742,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Convert colors to output intent color space.
+     * Convert colors to output intent color space. Default value is {@code false}.
      * @param convertColors true to convert colors to output intent color space.
      */
     public void setConvertColors(boolean convertColors) {
@@ -760,7 +758,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Enable tagged PDF.
+     * Enable tagged PDF. Default value is {@code false}.
      * @param taggedPdf true to enable tagged PDF.
      */
     public void setTaggedPdf(boolean taggedPdf) {
@@ -822,6 +820,7 @@ abstract class AbstractPrince {
     //region PDF encryption options.
     /**
      * Specify whether encryption should be applied to the output file.
+     * Default value is {@code false}.
      * @param encrypt true to enable PDF encryption.
      */
     public void setEncrypt(boolean encrypt) {
@@ -829,7 +828,8 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Specify the size of the encryption key.
+     * Specify the size of the encryption key. Default value is
+     * {@link com.princexml.wrapper.enums.KeyBits#BITS128}.
      * @param keyBits The size of the encryption key.
      */
     public void setKeyBits(KeyBits keyBits) {
@@ -853,7 +853,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disallow printing of the PDF file.
+     * Disallow printing of the PDF file. Default value is {@code false}.
      * @param disallowPrint true to disallow printing.
      */
     public void setDisallowPrint(boolean disallowPrint) {
@@ -861,7 +861,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disallow modification of the PDF file.
+     * Disallow modification of the PDF file. Default value is {@code false}.
      * @param disallowCopy true to disallow modification.
      */
     public void setDisallowCopy(boolean disallowCopy) {
@@ -871,7 +871,7 @@ abstract class AbstractPrince {
     /**
      * Used together with {@link #setDisallowCopy(boolean)}, which creates an
      * exception by enabling text access for screen reader devices for the
-     * visually impaired.
+     * visually impaired. Default value is {@code false}.
      * @param allowCopyForAccessibility true to allow text access.
      */
     public void setAllowCopyForAccessibility(boolean allowCopyForAccessibility) {
@@ -879,7 +879,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disallow annotation of the PDF file.
+     * Disallow annotation of the PDF file. Default value is {@code false}.
      * @param disallowAnnotate true to disallow annotation.
      */
     public void setDisallowAnnotate(boolean disallowAnnotate) {
@@ -887,7 +887,7 @@ abstract class AbstractPrince {
     }
 
     /**
-     * Disallow modification of the PDF file.
+     * Disallow modification of the PDF file. Default value is {@code false}.
      * @param disallowModify true to disallow modification.
      */
     public void setDisallowModify(boolean disallowModify) {
@@ -898,6 +898,7 @@ abstract class AbstractPrince {
      * Used together with {@link #setDisallowModify(boolean)}, which creates an
      * exception. It allows the document to be inserted into another document or
      * other pages to be added, but the content of the document cannot be modified.
+     * Default value is {@code false}.
      * @param allowAssembly true to allow assembly.
      */
     public void setAllowAssembly(boolean allowAssembly) {

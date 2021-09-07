@@ -17,7 +17,7 @@ final class Util {
     static final int BUFFER_SIZE = 65536;
 
     /**
-     * Invoke a process from a list of command line arguments.
+     * Invoke a process from a list of command-line arguments.
      */
     static Process invokeProcess(List<String> cmdLine) throws IOException {
         String[] cmdLineArray = cmdLine.toArray(new String[0]);
