@@ -432,18 +432,18 @@ public class Prince extends AbstractPrince {
 
     //region Input options.
     /**
-     * Rather than retrieving documents beginning with {@code URL}, get them
-     * from the local directory {@code DIR}. This method can be called more than
+     * Rather than retrieving documents beginning with {@code url}, get them
+     * from the local directory {@code dir}. This method can be called more than
      * once to add multiple remappings.
-     * @param remap The remapping string in the format "URL=DIR"
-     *              (e.g. "http://example/=../images").
+     * @param url The URL to map to a directory.
+     * @param directory The directory that a URL is mapped to.
      */
-    public void addRemap(String remap) {
-        this.remaps.add(remap);
+    public void addRemap(String url, String directory) {
+        this.remaps.add(url + "=" + directory);
     }
 
     /**
-     * Clear all of the remappings accumulated by calling {@link #addRemap(String)}.
+     * Clear all of the remappings accumulated by calling {@link #addRemap(String, String)}.
      */
     public void clearRemaps() {
         this.remaps.clear();
