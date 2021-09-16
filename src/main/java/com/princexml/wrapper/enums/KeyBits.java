@@ -20,6 +20,14 @@ public enum KeyBits {
         this.keyBits = keyBits;
     }
 
+    /**
+     * Return the underlying {@code KeyBits} value.
+     * @return The underlying KeyBits value.
+     */
+    public int getValue() {
+        return this.keyBits;
+    }
+
     @Override
     public String toString() {
         return Integer.toString(this.keyBits);
