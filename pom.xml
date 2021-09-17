@@ -46,4 +46,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/yeslogic/prince-java-wrapper</url>
+        </repository>
+    </distributionManagement>
 </project>

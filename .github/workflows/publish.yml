@@ -6,8 +6,12 @@ on:
       - 'v[1-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -17,8 +21,8 @@ jobs:
         with:
           distribution: 'adopt-openj9'
           java-version: '8'
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots verify javadoc:javadoc
+      - name: Build Javadoc
+        run: mvn javadoc:javadoc
       - name: Set release version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Deploy Javadoc to versioned folder
@@ -34,3 +38,7 @@ jobs:
           folder: target/site/apidocs
           clean: true
           target-folder: 'current'
+      - name: Publish Maven package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
