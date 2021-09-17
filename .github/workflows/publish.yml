@@ -1,0 +1,36 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v[1-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt-openj9'
+          java-version: '8'
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots verify javadoc:javadoc
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Deploy Javadoc to versioned folder
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: docs
+          folder: target/site/apidocs
+          target-folder: ${{ env.RELEASE_VERSION }}
+      - name: Deploy Javadoc to latest folder
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: docs
+          folder: target/site/apidocs
+          clean: true
+          target-folder: 'current'
