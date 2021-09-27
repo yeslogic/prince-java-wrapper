@@ -427,7 +427,9 @@ public class Prince extends AbstractPrince {
 
     private boolean readMessagesFromStderr(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        return readMessages(reader);
+        boolean result = readMessages(reader);
+        reader.close();
+        return result;
     }
 
     //region Input options.
