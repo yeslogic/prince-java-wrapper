@@ -41,7 +41,7 @@ public class Prince extends AbstractPrince {
     private RasterBackground rasterBackground;
 
     // Additional options.
-    private final Map<String, String> options = new LinkedHashMap<>();
+    private final List<Pair> options = new ArrayList<>();
 
     /**
      * Constructor for {@code Prince}.
@@ -420,7 +420,7 @@ public class Prince extends AbstractPrince {
         if (rasterThreads > -1) { cmdLine.add(toCommand("raster-threads", rasterThreads)); }
         if (rasterBackground != null) { cmdLine.add(toCommand("raster-background", rasterBackground)); }
 
-        options.forEach((k, v) -> cmdLine.add(v == null ? toCommand(k) : toCommand(k, v)));
+        options.forEach(o -> cmdLine.add(o.snd == null ? toCommand(o.fst) : toCommand(o.fst, o.snd)));
 
         return cmdLine;
     }
@@ -570,7 +570,7 @@ public class Prince extends AbstractPrince {
      * @param key The command-line option.
      */
     public void addOption(String key) {
-        this.options.put(key, null);
+        this.options.add(new Pair(key));
     }
 
     /**
@@ -579,7 +579,7 @@ public class Prince extends AbstractPrince {
      * @param value The command-line option value.
      */
     public void addOption(String key, String value) {
-        this.options.put(key, value);
+        this.options.add(new Pair(key, value));
     }
 
     /**
