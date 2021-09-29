@@ -64,39 +64,36 @@ class PrinceControlTest {
 
     @Test
     void testConvert1() throws IOException {
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convert-1.pdf");
-        boolean result = p.convert(INPUT_PATH, fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convert-1.pdf")) {
+            assertTrue(p.convert(INPUT_PATH, fos), e.message);
+        }
     }
 
     @Test
     void testConvert2() throws IOException {
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convert-2.pdf");
-        List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-        boolean result = p.convert(inputPaths, fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convert-2.pdf")) {
+            List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
+            assertTrue(p.convert(inputPaths, fos), e.message);
+        }
     }
 
     @Test
     void testConvert3() throws IOException {
-        FileInputStream fis = new FileInputStream(INPUT_PATH);
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convert-3.pdf");
-        p.setInputType(InputType.HTML);
-        boolean result = p.convert(fis, fos);
-        fis.close();
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileInputStream fis = new FileInputStream(INPUT_PATH);
+             FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convert-3.pdf")
+        ) {
+            p.setInputType(InputType.HTML);
+            assertTrue(p.convert(fis, fos), e.message);
+        }
     }
 
     @Test
     void testConvertString() throws IOException {
-        byte[] bs = Files.readAllBytes(Paths.get(INPUT_PATH));
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convertstring.pdf");
-        p.setInputType(InputType.HTML);
-        boolean result = p.convertString(new String(bs, StandardCharsets.UTF_8), fos);
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-convertstring.pdf")) {
+            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
+            p.setInputType(InputType.HTML);
+            assertTrue(p.convertString(input, fos), e.message);
+        }
     }
 
     // Check JSON.
@@ -151,9 +148,8 @@ class PrinceControlTest {
         p.setPdfKeywords("x");
         p.setPdfCreator("x");
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream(); // Doesn't matter.
-        boolean result = p.convert(INPUT_PATH, os);
-        os.close();
-        assertTrue(result, e.message);
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
+            assertTrue(p.convert(INPUT_PATH, os), e.message);
+        }
     }
 }

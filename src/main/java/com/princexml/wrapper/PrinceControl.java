@@ -70,9 +70,10 @@ public class PrinceControl extends AbstractPrince {
             throw new RuntimeException("inputType has to be set to XML or HTML");
         }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Util.copyInputToOutput(input, baos);
-        addResource(baos.toByteArray());
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Util.copyInputToOutput(input, baos);
+            addResource(baos.toByteArray());
+        }
 
         return convert(output);
     }
@@ -93,6 +94,7 @@ public class PrinceControl extends AbstractPrince {
             throw new RuntimeException("control process has not been started");
         }
 
+        // These streams are closed in stop().
         OutputStream toPrince = process.getOutputStream();
         InputStream fromPrince = process.getInputStream();
 
@@ -109,9 +111,10 @@ public class PrinceControl extends AbstractPrince {
         }
 
         if (chunk.getTag().equals("log")) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    new ByteArrayInputStream(chunk.getBytes())));
-            return readMessages(br);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                    new ByteArrayInputStream(chunk.getBytes())))) {
+                return readMessages(br);
+            }
         } else if (chunk.getTag().equals("err")) {
             throw new IOException("error: " + chunk.getString());
         } else {
@@ -134,6 +137,7 @@ public class PrinceControl extends AbstractPrince {
 
         process = Util.invokeProcess(cmdLine);
 
+        // This stream is closed in stop().
         InputStream fromPrince = process.getInputStream();
         Chunk chunk = Chunk.readChunk(fromPrince);
 
@@ -155,12 +159,11 @@ public class PrinceControl extends AbstractPrince {
             throw new RuntimeException("control process has not been started");
         }
 
-        OutputStream toPrince = process.getOutputStream();
-        InputStream fromPrince = process.getInputStream();
+        try (OutputStream toPrince = process.getOutputStream()) {
+            Chunk.writeChunk(toPrince, "end", "");
+        }
+        process.getInputStream().close();
 
-        Chunk.writeChunk(toPrince, "end", "");
-        toPrince.close();
-        fromPrince.close();
         process.destroy();
     }
 

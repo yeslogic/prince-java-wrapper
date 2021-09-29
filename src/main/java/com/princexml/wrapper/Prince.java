@@ -125,10 +125,10 @@ public class Prince extends AbstractPrince {
         cmdLine.add(toCommand("output", "-"));
 
         Process process = Util.invokeProcess(cmdLine);
-        InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(fromPrince, output);
-        fromPrince.close();
+        try (InputStream fromPrince = process.getInputStream()) {
+            Util.copyInputToOutput(fromPrince, output);
+        }
 
         return readMessagesFromStderr(process);
     }
@@ -144,14 +144,14 @@ public class Prince extends AbstractPrince {
         cmdLine.add("-");
 
         Process process = Util.invokeProcess(cmdLine);
-        OutputStream toPrince = process.getOutputStream();
-        InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(input, toPrince);
-        toPrince.close();
+        try (OutputStream toPrince = process.getOutputStream()) {
+            Util.copyInputToOutput(input, toPrince);
+        }
 
-        Util.copyInputToOutput(fromPrince, output);
-        fromPrince.close();
+        try (InputStream fromPrince = process.getInputStream()) {
+            Util.copyInputToOutput(fromPrince, output);
+        }
 
         return readMessagesFromStderr(process);
     }
@@ -173,10 +173,10 @@ public class Prince extends AbstractPrince {
         cmdLine.add("-");
 
         Process process = Util.invokeProcess(cmdLine);
-        OutputStream toPrince = process.getOutputStream();
 
-        toPrince.write(input.getBytes(StandardCharsets.UTF_8));
-        toPrince.close();
+        try (OutputStream toPrince = process.getOutputStream()) {
+            toPrince.write(input.getBytes(StandardCharsets.UTF_8));
+        }
 
         return readMessagesFromStderr(process);
     }
@@ -184,12 +184,9 @@ public class Prince extends AbstractPrince {
     /** {@inheritDoc} */
     @Override
     public boolean convertString(String input, OutputStream output) throws IOException {
-        InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-
-        boolean result = convert(in, output);
-        in.close();
-
-        return result;
+        try (InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8))) {
+            return convert(in, output);
+        }
     }
 
     /**
@@ -263,10 +260,10 @@ public class Prince extends AbstractPrince {
         cmdLine.add(toCommand("raster-output", "-"));
 
         Process process = Util.invokeProcess(cmdLine);
-        InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(fromPrince, output);
-        fromPrince.close();
+        try (InputStream fromPrince = process.getInputStream()) {
+            Util.copyInputToOutput(fromPrince, output);
+        }
 
         return readMessagesFromStderr(process);
     }
@@ -297,14 +294,14 @@ public class Prince extends AbstractPrince {
         cmdLine.add("-");
 
         Process process = Util.invokeProcess(cmdLine);
-        OutputStream toPrince = process.getOutputStream();
-        InputStream fromPrince = process.getInputStream();
 
-        Util.copyInputToOutput(input, toPrince);
-        toPrince.close();
+        try (OutputStream toPrince = process.getOutputStream()) {
+            Util.copyInputToOutput(input, toPrince);
+        }
 
-        Util.copyInputToOutput(fromPrince, output);
-        fromPrince.close();
+        try (InputStream fromPrince = process.getInputStream()) {
+            Util.copyInputToOutput(fromPrince, output);
+        }
 
         return readMessagesFromStderr(process);
     }
@@ -328,10 +325,10 @@ public class Prince extends AbstractPrince {
         cmdLine.add("-");
 
         Process process = Util.invokeProcess(cmdLine);
-        OutputStream toPrince = process.getOutputStream();
 
-        toPrince.write(input.getBytes(StandardCharsets.UTF_8));
-        toPrince.close();
+        try (OutputStream toPrince = process.getOutputStream()) {
+            toPrince.write(input.getBytes(StandardCharsets.UTF_8));
+        }
 
         return readMessagesFromStderr(process);
     }
@@ -346,12 +343,9 @@ public class Prince extends AbstractPrince {
      * @throws IOException If an I/O error occurs.
      */
     public boolean rasterizeString(String input, OutputStream output) throws IOException {
-        InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-
-        boolean result = rasterize(in, output);
-        in.close();
-
-        return result;
+        try (InputStream in = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8))) {
+            return rasterize(in, output);
+        }
     }
 
     private List<String> getJobCommandLine(String logType) {
@@ -426,10 +420,9 @@ public class Prince extends AbstractPrince {
     }
 
     private boolean readMessagesFromStderr(Process process) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        boolean result = readMessages(reader);
-        reader.close();
-        return result;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            return readMessages(reader);
+        }
     }
 
     //region Input options.
