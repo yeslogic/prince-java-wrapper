@@ -218,6 +218,9 @@ class PrinceTest {
         p.setInsecure(true);
         p.setNoParallelDownloads(true);
 
+        p.setLicenseFile("x");
+        p.setLicenseKey("x");
+
         ByteArrayOutputStream os = new ByteArrayOutputStream(); // Doesn't matter.
         boolean result = p.convert(INPUT_PATH, os);
         os.close();

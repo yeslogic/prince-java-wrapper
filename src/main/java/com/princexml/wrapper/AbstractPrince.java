@@ -107,6 +107,10 @@ abstract class AbstractPrince {
     protected boolean disallowModify;
     protected boolean allowAssembly;
 
+    // License options.
+    private String licenseFile;
+    private String licenseKey;
+
     protected AbstractPrince(String princePath) {
         this(princePath, null);
     }
@@ -198,6 +202,9 @@ abstract class AbstractPrince {
         if (sslVersion != null) { cmdLine.add(toCommand("ssl-version", sslVersion)); }
         if (insecure) { cmdLine.add(toCommand("insecure")); }
         if (noParallelDownloads) { cmdLine.add(toCommand("no-parallel-downloads")); }
+
+        if (licenseFile != null) { cmdLine.add(toCommand("license-file", licenseFile)); }
+        if (licenseKey != null) { cmdLine.add(toCommand("license-key", licenseKey)); }
 
         return cmdLine;
     }
@@ -903,6 +910,25 @@ abstract class AbstractPrince {
      */
     public void setAllowAssembly(boolean allowAssembly) {
         this.allowAssembly = allowAssembly;
+    }
+    //endregion
+
+    //region License options.
+    /**
+     * Specify the license file.
+     * @param licenseFile The filename of the license file.
+     */
+    public void setLicenseFile(String licenseFile) {
+        this.licenseFile = licenseFile;
+    }
+
+    /**
+     * Specify the license key. This is the {@code <signature>} field in the
+     * license file.
+     * @param licenseKey The license key.
+     */
+    public void setLicenseKey(String licenseKey) {
+        this.licenseKey = licenseKey;
     }
     //endregion
 }
