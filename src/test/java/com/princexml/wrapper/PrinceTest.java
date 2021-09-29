@@ -73,115 +73,103 @@ class PrinceTest {
 
     @Test
     void testConvert4() throws IOException {
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-4.pdf");
-        boolean result = p.convert(INPUT_PATH, fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-4.pdf")) {
+            assertTrue(p.convert(INPUT_PATH, fos), e.message);
+        }
     }
 
     @Test
     void testConvert5() throws IOException {
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-5.pdf");
-        List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-        boolean result = p.convert(inputPaths, fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-5.pdf")) {
+            List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
+            assertTrue(p.convert(inputPaths, fos), e.message);
+        }
     }
 
     @Test
     void testConvert6() throws IOException {
-        FileInputStream fis = new FileInputStream(INPUT_PATH);
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-6.pdf");
-        p.setInputType(InputType.HTML);
-        boolean result = p.convert(fis, fos);
-        fis.close();
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileInputStream fis = new FileInputStream(INPUT_PATH);
+             FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-6.pdf")
+        ) {
+            p.setInputType(InputType.HTML);
+            assertTrue(p.convert(fis, fos), e.message);
+        }
     }
 
     @Test
     void testConvertString1() throws IOException {
-        byte[] bs = Files.readAllBytes(Paths.get(INPUT_PATH));
+        String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
         p.setInputType(InputType.HTML);
-        boolean result = p.convertString(new String(bs, StandardCharsets.UTF_8), RESOURCES_DIR + "convertstring-1.pdf");
-        assertTrue(result, e.message);
+        assertTrue(p.convertString(input, RESOURCES_DIR + "convertstring-1.pdf"), e.message);
     }
 
     @Test
     void testConvertString2() throws IOException {
-        byte[] bs = Files.readAllBytes(Paths.get(INPUT_PATH));
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convertstring-2.pdf");
-        p.setInputType(InputType.HTML);
-        boolean result = p.convertString(new String(bs, StandardCharsets.UTF_8), fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convertstring-2.pdf")) {
+            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
+            p.setInputType(InputType.HTML);
+            assertTrue(p.convertString(input, fos), e.message);
+        }
     }
 
     @Test
     void testRasterize1() throws IOException {
-        boolean result = p.rasterize(INPUT_PATH, RESOURCES_DIR + "rasterize-1-page%d.png");
-        assertTrue(result, e.message);
+        assertTrue(p.rasterize(INPUT_PATH, RESOURCES_DIR + "rasterize-1-page%d.png"), e.message);
     }
 
     @Test
     void testRasterize2() throws IOException {
         List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-        boolean result = p.rasterize(inputPaths, RESOURCES_DIR + "rasterize-2-page%d.png");
-        assertTrue(result, e.message);
+        assertTrue(p.rasterize(inputPaths, RESOURCES_DIR + "rasterize-2-page%d.png"), e.message);
     }
 
     @Test
     void testRasterize3() throws IOException {
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-3.png");
-        p.setRasterPage(1);
-        p.setRasterFormat(RasterFormat.PNG);
-        boolean result = p.rasterize(INPUT_PATH, fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-3.png")) {
+            p.setRasterPage(1);
+            p.setRasterFormat(RasterFormat.PNG);
+            assertTrue(p.rasterize(INPUT_PATH, fos), e.message);
+        }
     }
 
     @Test
     void testRasterize4() throws IOException {
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-4.png");
-        List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-        p.setRasterPage(2);
-        p.setRasterFormat(RasterFormat.PNG);
-        boolean result = p.rasterize(inputPaths, fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-4.png")) {
+            List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
+            p.setRasterPage(2);
+            p.setRasterFormat(RasterFormat.PNG);
+            assertTrue(p.rasterize(inputPaths, fos), e.message);
+        }
     }
 
     @Test
     void testRasterize5() throws IOException {
-        FileInputStream fis = new FileInputStream(INPUT_PATH);
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-5.png");
-        p.setInputType(InputType.HTML);
-        p.setRasterPage(1);
-        p.setRasterFormat(RasterFormat.PNG);
-        boolean result = p.rasterize(fis, fos);
-        fis.close();
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileInputStream fis = new FileInputStream(INPUT_PATH);
+             FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-5.png")
+        ) {
+            p.setInputType(InputType.HTML);
+            p.setRasterPage(1);
+            p.setRasterFormat(RasterFormat.PNG);
+            assertTrue(p.rasterize(fis, fos), e.message);
+        }
     }
 
     @Test
     void testRasterizeString1() throws IOException {
-        byte[] bs = Files.readAllBytes(Paths.get(INPUT_PATH));
+        String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
         p.setInputType(InputType.HTML);
-        boolean result = p.rasterizeString(new String(bs, StandardCharsets.UTF_8), RESOURCES_DIR + "rasterizestring-1-page%d.png");
-        assertTrue(result, e.message);
+        assertTrue(p.rasterizeString(input, RESOURCES_DIR + "rasterizestring-1-page%d.png"), e.message);
     }
 
     @Test
     void testRasterizeString2() throws IOException {
-        byte[] bs = Files.readAllBytes(Paths.get(INPUT_PATH));
-        p.setInputType(InputType.HTML);
-        p.setRasterPage(1);
-        p.setRasterFormat(RasterFormat.PNG);
-        FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterizestring-2.png");
-        boolean result = p.rasterizeString(new String(bs, StandardCharsets.UTF_8), fos);
-        fos.close();
-        assertTrue(result, e.message);
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterizestring-2.png")) {
+            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
+            p.setInputType(InputType.HTML);
+            p.setRasterPage(1);
+            p.setRasterFormat(RasterFormat.PNG);
+            assertTrue(p.rasterizeString(input, fos), e.message);
+        }
     }
 
     @Test
@@ -221,10 +209,9 @@ class PrinceTest {
         p.setLicenseFile("x");
         p.setLicenseKey("x");
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream(); // Doesn't matter.
-        boolean result = p.convert(INPUT_PATH, os);
-        os.close();
-        assertTrue(result, e.message);
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
+            assertTrue(p.convert(INPUT_PATH, os), e.message);
+        }
     }
 
     // Check keys.
@@ -295,9 +282,8 @@ class PrinceTest {
         p.setRasterThreads(100);
         p.setRasterBackground(RasterBackground.WHITE);
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream(); // Doesn't matter.
-        boolean result = p.convert(INPUT_PATH, os);
-        os.close();
-        assertTrue(result, e.message);
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
+            assertTrue(p.convert(INPUT_PATH, os), e.message);
+        }
     }
 }
