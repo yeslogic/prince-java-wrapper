@@ -226,6 +226,7 @@ public class PrinceControl extends AbstractPrince {
         if (pdfLang != null) { json.field("pdf-lang", pdfLang); }
         if (xmp != null) { json.field("pdf-xmp", xmp); }
         json.field("tagged-pdf", taggedPdf);
+        json.field("pdf-forms", pdfForms);
 
         json.beginList("attach");
         for (FileAttachment fa : fileAttachments) {
