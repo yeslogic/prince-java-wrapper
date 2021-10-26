@@ -86,6 +86,7 @@ abstract class AbstractPrince {
     protected boolean convertColors;
     protected String fallbackCmykProfile;
     protected boolean taggedPdf;
+    protected boolean pdfForms;
 
     // PDF metadata options.
     protected String pdfTitle;
@@ -770,6 +771,14 @@ abstract class AbstractPrince {
      */
     public void setTaggedPdf(boolean taggedPdf) {
         this.taggedPdf = taggedPdf;
+    }
+
+    /**
+     * Enable PDF forms by default. Default value is {@code false}.
+     * @param pdfForms true to enable PDF forms.
+     */
+    public void setPdfForms(boolean pdfForms) {
+        this.pdfForms = pdfForms;
     }
     //endregion
 

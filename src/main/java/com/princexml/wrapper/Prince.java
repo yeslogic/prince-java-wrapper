@@ -387,6 +387,7 @@ public class Prince extends AbstractPrince {
         if (convertColors) { cmdLine.add(toCommand("convert-colors")); }
         if (fallbackCmykProfile != null) { cmdLine.add(toCommand("fallback-cmyk-profile", fallbackCmykProfile)); }
         if (taggedPdf) { cmdLine.add(toCommand("tagged-pdf")); }
+        if (pdfForms) { cmdLine.add(toCommand("pdf-forms")); }
         if (cssDpi > 0) {cmdLine.add(toCommand("css-dpi", cssDpi)); }
 
         if (pdfTitle != null) { cmdLine.add(toCommand("pdf-title", pdfTitle)); }

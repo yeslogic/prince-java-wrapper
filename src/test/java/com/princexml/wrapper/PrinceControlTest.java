@@ -138,6 +138,7 @@ class PrinceControlTest {
         p.setPdfLang("x");
         p.setXmp("x");
         p.setTaggedPdf(true);
+        p.setPdfForms(true);
 
         p.addFileAttachment("x");
         p.addFileAttachment(new byte[] {0}, "x", "y");

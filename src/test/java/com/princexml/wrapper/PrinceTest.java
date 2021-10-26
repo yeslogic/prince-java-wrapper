@@ -255,6 +255,7 @@ class PrinceTest {
         p.setConvertColors(true);
         p.setFallbackCmykProfile("x");
         p.setTaggedPdf(true);
+        p.setPdfForms(true);
         p.setCssDpi(100);
 
         p.setPdfTitle("x");
