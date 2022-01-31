@@ -12,15 +12,8 @@ URL, e.g.
 
 ## Download
 
-This wrapper is hosted on the [GitHub Packages (Maven) registry][3]. Installing
-this package requires authenticating to GitHub Packages with a
-[personal access token][4]. Ensure that the personal access token has registry
-read access.
-
-Alternatively, the wrapper can be [downloaded directly][3] via the links on the
-sidebar.
+This wrapper is hosted on [Maven Central][3].
 
 [1]: https://www.princexml.com/
 [2]: https://yeslogic.github.io/prince-java-wrapper/
-[3]: https://github.com/yeslogic/prince-java-wrapper/packages/993641
-[4]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-with-a-personal-access-token
+[3]: https://search.maven.org/artifact/com.princexml/prince-java-wrapper
