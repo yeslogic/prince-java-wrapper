@@ -7,6 +7,33 @@
     <groupId>com.princexml</groupId>
     <artifactId>prince-java-wrapper</artifactId>
     <version>1.1.0</version>
+    <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>This library contains class files that provide a Java interface to Prince.</description>
+    <url>https://github.com/yeslogic/prince-java-wrapper</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>YesLogic Pty. Ltd.</name>
+            <email>info@yeslogic.com</email>
+            <organization>YesLogic Pty. Ltd.</organization>
+            <organizationUrl>https://yeslogic.com/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/yeslogic/prince-java-wrapper.git</connection>
+        <developerConnection>scm:git:ssh://github.com:yeslogic/prince-java-wrapper.git</developerConnection>
+        <url>https://github.com/yeslogic/prince-java-wrapper/tree/master</url>
+    </scm>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
