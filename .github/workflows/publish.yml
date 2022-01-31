@@ -21,6 +21,11 @@ jobs:
         with:
           distribution: 'adopt-openj9'
           java-version: '8'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Build Javadoc
         run: mvn javadoc:javadoc
       - name: Set release version
@@ -39,6 +44,8 @@ jobs:
           clean: true
           target-folder: 'current'
       - name: Publish Maven package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode -DsignArtifacts clean deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
