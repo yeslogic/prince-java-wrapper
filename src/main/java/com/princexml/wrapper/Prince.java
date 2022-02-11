@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006, 2010, 2012, 2014-2015, 2018, 2021 YesLogic Pty. Ltd.
+ * Copyright (C) 2005-2006, 2010, 2012, 2014-2015, 2018, 2021-2022 YesLogic Pty. Ltd.
  * All rights reserved.
  */
 
@@ -356,6 +356,7 @@ public class Prince extends AbstractPrince {
         if (inputType != null) { cmdLine.add(toCommand("input", inputType)); }
         if (baseUrl != null) { cmdLine.add(toCommand("baseurl", baseUrl)); }
         if (!remaps.isEmpty()) { cmdLine.addAll(toCommands("remap", remaps)); }
+        if (iframes) { cmdLine.add(toCommand("iframes")); }
         if (xInclude) { cmdLine.add(toCommand("xinclude")); }
         if (xmlExternalEntities) { cmdLine.add(toCommand("xml-external-entities")); }
         if (noLocalFiles) { cmdLine.add(toCommand("no-local-files")); }

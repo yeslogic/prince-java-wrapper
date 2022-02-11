@@ -223,6 +223,7 @@ class PrinceTest {
         p.addRemap("i", "j");
         p.setXInclude(true);
         p.setXmlExternalEntities(true);
+        p.setIframes(true);
         p.setNoLocalFiles(true);
 
         p.setJavaScript(true);

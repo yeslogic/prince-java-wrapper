@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 YesLogic Pty. Ltd.
+ * Copyright (C) 2021-2022 YesLogic Pty. Ltd.
  * All rights reserved.
  */
 
@@ -33,6 +33,7 @@ abstract class AbstractPrince {
     // Input options.
     protected InputType inputType;
     protected String baseUrl;
+    protected boolean iframes;
     protected boolean xInclude;
     protected boolean xmlExternalEntities;
 
@@ -336,6 +337,14 @@ abstract class AbstractPrince {
      */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    /**
+     * Enable HTML iframes. Default value is {@code false}.
+     * @param iframes true to enable HTML iframes.
+     */
+    public void setIframes(boolean iframes) {
+        this.iframes = iframes;
     }
 
     /**

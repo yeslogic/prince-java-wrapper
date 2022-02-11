@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2018, 2021 YesLogic Pty. Ltd.
+ * Copyright (C) 2015, 2018, 2021-2022 YesLogic Pty. Ltd.
  * All rights reserved.
  */
 
@@ -194,6 +194,7 @@ public class PrinceControl extends AbstractPrince {
         json.field("author-style", !noAuthorStyle);
         json.field("javascript", javaScript);
         if (maxPasses > 0) { json.field("max-passes", maxPasses); }
+        json.field("iframes", iframes);
         json.field("xinclude", xInclude);
         json.field("xml-external-entities", xmlExternalEntities);
         json.endObj();
