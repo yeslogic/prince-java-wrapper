@@ -221,6 +221,11 @@ public class PrinceControl extends AbstractPrince {
 
         if (pdfProfile != null) { json.field("pdf-profile", pdfProfile.toString()); }
         if (pdfOutputIntent != null) { json.field("pdf-output-intent", pdfOutputIntent); }
+        if (pdfScript != null) {
+            json.beginObj("pdf-script");
+            json.field("url", pdfScript);
+            json.endObj();
+        }
         if (fallbackCmykProfile != null) { json.field("fallback-cmyk-profile", fallbackCmykProfile); }
         json.field("color-conversion", convertColors ? "output-intent" : "none");
         if (pdfId != null) { json.field("pdf-id", pdfId); }
@@ -280,6 +285,15 @@ public class PrinceControl extends AbstractPrince {
     public void addStyleSheet(byte[] styleSheet) {
         resources.add(styleSheet);
         super.addStyleSheet("job-resource:" + (resources.size() - 1));
+    }
+
+    /**
+     * See {@link #setPdfScript(String)}.
+     * @param pdfScript The AcroJS script.
+     */
+    public void setPdfScript(byte[] pdfScript) {
+        resources.add(pdfScript);
+        super.setPdfScript("job-resource:" + (resources.size() - 1));
     }
 
     /**

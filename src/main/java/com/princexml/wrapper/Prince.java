@@ -376,6 +376,7 @@ public class Prince extends AbstractPrince {
         if (pdfLang != null) { cmdLine.add(toCommand("pdf-lang", pdfLang)); }
         if (pdfProfile != null) { cmdLine.add(toCommand("pdf-profile", pdfProfile)); }
         if (pdfOutputIntent != null) { cmdLine.add(toCommand("pdf-output-intent", pdfOutputIntent)); }
+        if (pdfScript != null) { cmdLine.add(toCommand("pdf-script", pdfScript)); }
         if (!fileAttachments.isEmpty()) { cmdLine.addAll(toCommands("attach",
                 fileAttachments.stream().map(a -> a.url).collect(Collectors.toList()))); }
         if (noArtificialFonts) { cmdLine.add(toCommand("no-artificial-fonts")); }
