@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.princexml.wrapper.CommandLine.toCommand;
 import static com.princexml.wrapper.CommandLine.toCommands;
@@ -78,6 +80,7 @@ abstract class AbstractPrince {
     protected PdfProfile pdfProfile;
     protected String pdfOutputIntent;
     protected String pdfScript;
+    protected Map<PdfEvent, String> pdfEventScripts = new HashMap<>();
     protected final List<FileAttachment> fileAttachments = new ArrayList<>();
     protected boolean noArtificialFonts;
     protected boolean noEmbedFonts;
@@ -695,6 +698,23 @@ abstract class AbstractPrince {
      */
     public void setPdfScript(String pdfScript) {
         this.pdfScript = pdfScript;
+    }
+
+    /**
+     * Include an AcroJS script to run on a specific event.
+     * @param pdfEvent The PDF event.
+     * @param pdfScript The filename or URL of the AcroJS script.
+     */
+    public void addPdfEventScript(PdfEvent pdfEvent, String pdfScript) {
+        this.pdfEventScripts.put(pdfEvent, pdfScript);
+    }
+
+    /**
+     * Clear all of the PDF event scripts accumulated by calling
+     * {@link #addPdfEventScript(PdfEvent, String)}.
+     */
+    public void clearPdfEventScripts() {
+        this.pdfEventScripts.clear();
     }
 
     /**
