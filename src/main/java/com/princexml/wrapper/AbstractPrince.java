@@ -77,6 +77,7 @@ abstract class AbstractPrince {
     protected String pdfLang;
     protected PdfProfile pdfProfile;
     protected String pdfOutputIntent;
+    protected String pdfScript;
     protected final List<FileAttachment> fileAttachments = new ArrayList<>();
     protected boolean noArtificialFonts;
     protected boolean noEmbedFonts;
@@ -686,6 +687,14 @@ abstract class AbstractPrince {
      */
     public void setPdfOutputIntent(String pdfOutputIntent) {
         this.pdfOutputIntent = pdfOutputIntent;
+    }
+
+    /**
+     * Include an AcroJS script to run when the PDF is opened.
+     * @param pdfScript The filename or URL of the AcroJS script.
+     */
+    public void setPdfScript(String pdfScript) {
+        this.pdfScript = pdfScript;
     }
 
     /**

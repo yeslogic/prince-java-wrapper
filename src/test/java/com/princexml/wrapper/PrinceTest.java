@@ -243,6 +243,7 @@ class PrinceTest {
         p.setPdfLang("x");
         p.setPdfProfile(PdfProfile.PDFA_1A);
         p.setPdfOutputIntent("x");
+        p.setPdfScript("x");
         p.addFileAttachment("x");
         p.addFileAttachment("y");
         p.setNoArtificialFonts(true);

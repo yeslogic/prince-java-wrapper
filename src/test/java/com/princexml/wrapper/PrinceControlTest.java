@@ -133,6 +133,7 @@ class PrinceControlTest {
 
         p.setPdfProfile(PdfProfile.PDFA_1A_AND_PDFUA_1);
         p.setPdfOutputIntent("x");
+        p.setPdfScript("x");
         p.setFallbackCmykProfile("x");
         p.setConvertColors(true);
         p.setPdfId("x");
