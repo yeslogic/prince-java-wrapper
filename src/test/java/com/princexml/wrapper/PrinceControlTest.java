@@ -2,6 +2,7 @@ package com.princexml.wrapper;
 
 import com.princexml.wrapper.enums.InputType;
 import com.princexml.wrapper.enums.KeyBits;
+import com.princexml.wrapper.enums.PdfEvent;
 import com.princexml.wrapper.enums.PdfProfile;
 import com.princexml.wrapper.events.MessageType;
 import com.princexml.wrapper.events.PrinceEvents;
@@ -134,6 +135,11 @@ class PrinceControlTest {
         p.setPdfProfile(PdfProfile.PDFA_1A_AND_PDFUA_1);
         p.setPdfOutputIntent("x");
         p.setPdfScript("x");
+        p.addPdfEventScript(PdfEvent.WILL_PRINT, "w");
+        p.clearPdfEventScripts();
+        p.addPdfEventScript(PdfEvent.WILL_CLOSE, "x");
+        p.addPdfEventScript(PdfEvent.WILL_CLOSE, "y");
+        p.addPdfEventScript(PdfEvent.DID_PRINT, "z");
         p.setFallbackCmykProfile("x");
         p.setConvertColors(true);
         p.setPdfId("x");

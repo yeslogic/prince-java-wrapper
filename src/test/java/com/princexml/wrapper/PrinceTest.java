@@ -244,6 +244,11 @@ class PrinceTest {
         p.setPdfProfile(PdfProfile.PDFA_1A);
         p.setPdfOutputIntent("x");
         p.setPdfScript("x");
+        p.addPdfEventScript(PdfEvent.WILL_PRINT, "w");
+        p.clearPdfEventScripts();
+        p.addPdfEventScript(PdfEvent.WILL_CLOSE, "x");
+        p.addPdfEventScript(PdfEvent.WILL_CLOSE, "y");
+        p.addPdfEventScript(PdfEvent.DID_PRINT, "z");
         p.addFileAttachment("x");
         p.addFileAttachment("y");
         p.setNoArtificialFonts(true);

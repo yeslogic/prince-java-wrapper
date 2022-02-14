@@ -6,6 +6,7 @@
 package com.princexml.wrapper;
 
 import com.princexml.wrapper.enums.InputType;
+import com.princexml.wrapper.enums.PdfEvent;
 import com.princexml.wrapper.events.PrinceEvents;
 
 import java.io.*;
@@ -226,6 +227,15 @@ public class PrinceControl extends AbstractPrince {
             json.field("url", pdfScript);
             json.endObj();
         }
+        if (!pdfEventScripts.isEmpty()) {
+            json.beginObj("pdf-event-scripts");
+            pdfEventScripts.forEach((k, v) -> {
+                json.beginObj(k.toString());
+                json.field("url", v);
+                json.endObj();
+            });
+            json.endObj();
+        }
         if (fallbackCmykProfile != null) { json.field("fallback-cmyk-profile", fallbackCmykProfile); }
         json.field("color-conversion", convertColors ? "output-intent" : "none");
         if (pdfId != null) { json.field("pdf-id", pdfId); }
@@ -294,6 +304,16 @@ public class PrinceControl extends AbstractPrince {
     public void setPdfScript(byte[] pdfScript) {
         resources.add(pdfScript);
         super.setPdfScript("job-resource:" + (resources.size() - 1));
+    }
+
+    /**
+     * See {@link #addPdfEventScript(PdfEvent, String)}.
+     * @param pdfEvent The PDF event.
+     * @param pdfScript The AcroJS script.
+     */
+    public void addPdfEventScript(PdfEvent pdfEvent, byte[] pdfScript) {
+        resources.add(pdfScript);
+        super.addPdfEventScript(pdfEvent, "job-resource:" + (resources.size() - 1));
     }
 
     /**
