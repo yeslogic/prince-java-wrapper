@@ -257,6 +257,8 @@ abstract class AbstractPrince {
                         result = msgBody;
                         break;
                 }
+            } else {
+                handleNonStructuredMessage(line);
             }
 
             line = reader.readLine();
@@ -287,6 +289,24 @@ abstract class AbstractPrince {
             String value = tokens[1];
 
             events.onDataMessage(name, value);
+        }
+    }
+
+    private void handleNonStructuredMessage(String msg) {
+        if (events == null) { return; }
+
+        String princeWrn = "prince: warning: ";
+        String princeErr = "prince: error: ";
+
+        if (msg.startsWith(princeWrn)) {
+            String msgText = msg.substring(princeWrn.length());
+            events.onMessage(MessageType.WRN, "", msgText);
+        } else if (msg.startsWith(princeErr)) {
+            String msgText = msg.substring(princeErr.length());
+            events.onMessage(MessageType.ERR, "", msgText);
+        } else {
+            // Just treat everything else as debug messages.
+            events.onMessage(MessageType.DBG, "", msg);
         }
     }
 
