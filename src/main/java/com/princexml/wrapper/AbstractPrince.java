@@ -266,6 +266,8 @@ abstract class AbstractPrince {
     }
 
     private void handleMessage(String msgBody) {
+        if (events == null) { return; }
+
         String[] tokens = msgBody.split("\\|", 3);
         if (tokens.length == 3) {
             MessageType msgType = MessageType.valueOf(tokens[0].toUpperCase());
@@ -277,6 +279,8 @@ abstract class AbstractPrince {
     }
 
     private void handleDataMessage(String msgBody) {
+        if (events == null) { return; }
+
         String[] tokens = msgBody.split("\\|", 2);
         if (tokens.length == 2) {
             String name = tokens[0];
