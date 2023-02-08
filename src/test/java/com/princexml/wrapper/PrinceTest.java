@@ -25,12 +25,12 @@ class PrinceTest {
 
         @Override
         public void onMessage(MessageType msgType, String msgLocation, String msgText) {
-            message = msgType.name() + " " + msgLocation + " " + msgText;
+            message += msgType.name() + " " + msgLocation + " " + msgText + "\n";
         }
 
         @Override
         public void onDataMessage(String name, String value) {
-            message = "DAT " + name + " " + value;
+            message += "DAT " + name + " " + value + "\n";
         }
     }
 
