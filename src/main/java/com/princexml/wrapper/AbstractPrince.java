@@ -117,6 +117,15 @@ abstract class AbstractPrince {
     private String licenseFile;
     private String licenseKey;
 
+    // Advanced options.
+    private boolean failDroppedContent;
+    private boolean failMissingResources;
+    private boolean failStrippedTransparency;
+    private boolean failMissingGlyphs;
+    private boolean failPdfProfileError;
+    private boolean failPdfTagError;
+    private boolean failInvalidLicense;
+
     protected AbstractPrince(String princePath) {
         this(princePath, null);
     }
@@ -211,6 +220,14 @@ abstract class AbstractPrince {
 
         if (licenseFile != null) { cmdLine.add(toCommand("license-file", licenseFile)); }
         if (licenseKey != null) { cmdLine.add(toCommand("license-key", licenseKey)); }
+
+        if (failDroppedContent) { cmdLine.add(toCommand("fail-dropped-content")); }
+        if (failMissingResources) { cmdLine.add(toCommand("fail-missing-resources")); }
+        if (failStrippedTransparency) { cmdLine.add(toCommand("fail-stripped-transparency")); }
+        if (failMissingGlyphs) { cmdLine.add(toCommand("fail-missing-glyphs")); }
+        if (failPdfProfileError) { cmdLine.add(toCommand("fail-pdf-profile-error")); }
+        if (failPdfTagError) { cmdLine.add(toCommand("fail-pdf-tag-error")); }
+        if (failInvalidLicense) { cmdLine.add(toCommand("fail-invalid-license")); }
 
         return cmdLine;
     }
@@ -976,6 +993,86 @@ abstract class AbstractPrince {
      */
     public void setLicenseKey(String licenseKey) {
         this.licenseKey = licenseKey;
+    }
+    //endregion
+
+    //region Advanced options.
+    /**
+     * Fail-safe option that aborts the creation of a PDF if any content is
+     * dropped. Default value is {@code false}.
+     * @param failDroppedContent true to enable fail-safe option.
+     */
+    public void setFailDroppedContent(boolean failDroppedContent) {
+        this.failDroppedContent = failDroppedContent;
+    }
+
+    /**
+     * Fail-safe option that aborts the creation of a PDF if any resources
+     * cannot be loaded. Default value is {@code false}.
+     * @param failMissingResources true to enable fail-safe option.
+     */
+    public void setFailMissingResources(boolean failMissingResources) {
+        this.failMissingResources = failMissingResources;
+    }
+
+    /**
+     * Fail-safe option that aborts the creation of a PDF if transparent
+     * images are used with a PDF profile that does not support opacity.
+     * Default value is {@code false}.
+     * @param failStrippedTransparency true to enable fail-safe option.
+     */
+    public void setFailStrippedTransparency(boolean failStrippedTransparency) {
+        this.failStrippedTransparency = failStrippedTransparency;
+    }
+
+    /**
+     * Fail-safe option that aborts the creation of a PDF if glyphs cannot
+     * be found for any characters. Default value is {@code false}.
+     * @param failMissingGlyphs true to enable fail-safe option.
+     */
+    public void setFailMissingGlyphs(boolean failMissingGlyphs) {
+        this.failMissingGlyphs = failMissingGlyphs;
+    }
+
+    /**
+     * Fail-safe option that aborts the creation of a PDF if there are
+     * problems complying with the specified PDF profile. Default value is
+     * {@code false}.
+     * @param failPdfProfileError true to enable fail-safe option.
+     */
+    public void setFailPdfProfileError(boolean failPdfProfileError) {
+        this.failPdfProfileError = failPdfProfileError;
+    }
+
+    /**
+     * Fail-safe option that aborts the creation of a PDF if there are
+     * problems tagging the PDF for accessibility. Default value is {@code false}.
+     * @param failPdfTagError true to enable fail-safe option.
+     */
+    public void setFailPdfTagError(boolean failPdfTagError) {
+        this.failPdfTagError = failPdfTagError;
+    }
+
+    /**
+     * Fail-safe option that aborts the creation of a PDF if the Prince
+     * license is invalid or not readable. Default value is {@code false}.
+     * @param failInvalidLicense true to enable fail-safe option.
+     */
+    public void setFailInvalidLicense(boolean failInvalidLicense) {
+        this.failInvalidLicense = failInvalidLicense;
+    }
+    /**
+     * Enables/disables all fail-safe options.
+     * @param failSafe true to enable all fail-safe options.
+     */
+    public void setFailSafe(boolean failSafe) {
+        this.failDroppedContent = failSafe;
+        this.failMissingResources = failSafe;
+        this.failStrippedTransparency = failSafe;
+        this.failMissingGlyphs = failSafe;
+        this.failPdfProfileError = failSafe;
+        this.failPdfTagError = failSafe;
+        this.failInvalidLicense = failSafe;
     }
     //endregion
 }

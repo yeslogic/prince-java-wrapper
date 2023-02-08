@@ -214,6 +214,15 @@ class PrinceTest {
         }
     }
 
+    @Test
+    void testFailSafe() throws IOException {
+        p.setFailSafe(true);
+
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
+            assertTrue(p.convert(INPUT_PATH, os), e.message);
+        }
+    }
+
     // Check keys.
     @Test
     void testJobOptionKeys() throws IOException {
