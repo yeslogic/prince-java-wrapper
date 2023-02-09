@@ -15,9 +15,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'adopt-openj9'
           java-version: '8'
@@ -31,13 +31,13 @@ jobs:
       - name: Set release version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Deploy Javadoc to versioned folder
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: docs
           folder: target/site/apidocs
           target-folder: ${{ env.RELEASE_VERSION }}
       - name: Deploy Javadoc to latest folder
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: docs
           folder: target/site/apidocs
