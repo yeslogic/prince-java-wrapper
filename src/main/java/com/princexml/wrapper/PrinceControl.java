@@ -208,17 +208,19 @@ public class PrinceControl extends AbstractPrince {
         json.field("compress", !noCompress);
         json.field("object-streams", !noObjectStreams);
 
-        json.beginObj("encrypt");
-        if (keyBits != null) { json.field("key-bits", keyBits.getValue()); }
-        if (userPassword != null) { json.field("user-password", userPassword); }
-        if (ownerPassword != null) { json.field("owner-password", ownerPassword); }
-        json.field("disallow-print", disallowPrint);
-        json.field("disallow-modify", disallowModify);
-        json.field("disallow-copy", disallowCopy);
-        json.field("disallow-annotate", disallowAnnotate);
-        json.field("allow-copy-for-accessibility", allowCopyForAccessibility);
-        json.field("allow-assembly", allowAssembly);
-        json.endObj();
+        if(encrypt) {
+            json.beginObj("encrypt");
+            if (keyBits != null) { json.field("key-bits", keyBits.getValue()); }
+            if (userPassword != null) { json.field("user-password", userPassword); }
+            if (ownerPassword != null) { json.field("owner-password", ownerPassword); }
+            json.field("disallow-print", disallowPrint);
+            json.field("disallow-modify", disallowModify);
+            json.field("disallow-copy", disallowCopy);
+            json.field("disallow-annotate", disallowAnnotate);
+            json.field("allow-copy-for-accessibility", allowCopyForAccessibility);
+            json.field("allow-assembly", allowAssembly);
+            json.endObj();
+        }
 
         if (pdfProfile != null) { json.field("pdf-profile", pdfProfile.toString()); }
         if (pdfOutputIntent != null) { json.field("pdf-output-intent", pdfOutputIntent); }
