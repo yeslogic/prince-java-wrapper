@@ -113,6 +113,7 @@ class PrinceControlTest {
         p.setMaxPasses(5);
         p.setXInclude(true);
         p.setXmlExternalEntities(true);
+        p.setNoLocalFiles(true);
         p.setIframes(true);
 
         p.setNoEmbedFonts(true);

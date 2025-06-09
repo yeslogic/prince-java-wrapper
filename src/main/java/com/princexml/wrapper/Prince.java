@@ -22,7 +22,6 @@ import static com.princexml.wrapper.CommandLine.*;
 public class Prince extends AbstractPrince {
     // Input options.
     private final List<String> remaps = new ArrayList<>();
-    private boolean noLocalFiles;
 
     // CSS options.
     private String pageSize;
@@ -448,13 +447,6 @@ public class Prince extends AbstractPrince {
         this.remaps.clear();
     }
 
-    /**
-     * Disable access to local files. Default value is {@code false}.
-     * @param noLocalFiles true to disable local files.
-     */
-    public void setNoLocalFiles(boolean noLocalFiles) {
-        this.noLocalFiles = noLocalFiles;
-    }
     //endregion
 
     //region CSS options.

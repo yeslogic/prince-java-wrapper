@@ -198,6 +198,7 @@ public class PrinceControl extends AbstractPrince {
         json.field("iframes", iframes);
         json.field("xinclude", xInclude);
         json.field("xml-external-entities", xmlExternalEntities);
+        json.field("no-local-files", noLocalFiles);
         json.endObj();
 
         json.beginObj("pdf");
