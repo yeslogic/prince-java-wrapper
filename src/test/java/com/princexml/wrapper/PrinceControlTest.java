@@ -122,6 +122,7 @@ class PrinceControlTest {
         p.setNoCompress(true);
         p.setNoObjectStreams(true);
 
+        p.setEncrypt(true);
         p.setKeyBits(KeyBits.BITS40);
         p.setUserPassword("x");
         p.setOwnerPassword("x");
