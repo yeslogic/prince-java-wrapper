@@ -208,7 +208,7 @@ public class PrinceControl extends AbstractPrince {
         json.field("compress", !noCompress);
         json.field("object-streams", !noObjectStreams);
 
-        if(encrypt) {
+        if (encrypt) {
             json.beginObj("encrypt");
             if (keyBits != null) { json.field("key-bits", keyBits.getValue()); }
             if (userPassword != null) { json.field("user-password", userPassword); }
