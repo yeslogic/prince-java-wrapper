@@ -97,6 +97,23 @@ class PrinceTest {
     }
 
     @Test
+    void testConvertInputList1() throws IOException {
+        File inputListFile = createInputListFile();
+        boolean result = p.convertInputList(inputListFile.getAbsolutePath(),
+                RESOURCES_DIR + "convertinputlist-1.pdf");
+        assertTrue(result, e.message);
+    }
+
+    @Test
+    void testConvertInputList2() throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convertinputlist-2.pdf")) {
+            File inputListFile = createInputListFile();
+            p.setInputType(InputType.HTML);
+            assertTrue(p.convertInputList(inputListFile.getAbsolutePath(), fos), e.message);
+        }
+    }
+
+    @Test
     void testConvertString1() throws IOException {
         String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
         p.setInputType(InputType.HTML);
@@ -151,6 +168,24 @@ class PrinceTest {
             p.setRasterPage(1);
             p.setRasterFormat(RasterFormat.PNG);
             assertTrue(p.rasterize(fis, fos), e.message);
+        }
+    }
+
+    @Test
+    void testRasterizeInputList1() throws IOException {
+        File inputListFile = createInputListFile();
+        assertTrue(p.rasterizeInputList(inputListFile.getAbsolutePath(), RESOURCES_DIR +
+                "rasterizeinputlist-1-page%d.png"), e.message);
+    }
+
+    @Test
+    void testRasterizeInputList2() throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterizeinputlist-2.png")) {
+            File inputListFile = createInputListFile();
+            p.setInputType(InputType.HTML);
+            p.setRasterPage(2);
+            p.setRasterFormat(RasterFormat.PNG);
+            assertTrue(p.rasterizeInputList(inputListFile.getAbsolutePath(), fos), e.message);
         }
     }
 
@@ -302,5 +337,18 @@ class PrinceTest {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
             assertTrue(p.convert(INPUT_PATH, os), e.message);
         }
+    }
+
+    File createInputListFile() throws IOException {
+        File inputListFile = File.createTempFile("input-list", ".txt");
+        BufferedWriter bw = new BufferedWriter(new FileWriter(inputListFile));
+        bw.write(INPUT_PATH);
+        bw.newLine();
+        bw.write(INPUT_PATH);
+        bw.newLine();
+        bw.close();
+        inputListFile.deleteOnExit();
+
+        return inputListFile;
     }
 }
