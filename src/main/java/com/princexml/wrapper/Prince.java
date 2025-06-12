@@ -157,6 +157,52 @@ public class Prince extends AbstractPrince {
     }
 
     /**
+     * Convert multiple XML or HTML files to a PDF file by reading an input list
+     * from a specified file. (An input list is a newline-separated sequence of
+     * file paths / URLs.)
+     * @param inputListPath The path to the input list file.
+     * @param outputPath The filename of the output PDF file.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
+    public boolean convertInputList(String inputListPath, String outputPath) throws IOException {
+        List<String> cmdLine = getJobCommandLine("normal");
+        cmdLine.add(toCommand("input-list", inputListPath));
+        if (outputPath != null) {
+            cmdLine.add(toCommand("output", outputPath));
+        }
+
+        Process process = Util.invokeProcess(cmdLine);
+
+        return readMessagesFromStderr(process);
+    }
+
+    /**
+     * Convert multiple XML or HTML files to a PDF file by reading an input list
+     * from a specified file. (An input list is a newline-separated sequence of
+     * file paths / URLs.) This method is useful for servlets as it allows
+     * Prince to write the PDF output directly to the {@code OutputStream} of
+     * the servlet response.
+     * @param inputListPath The path to the input list file.
+     * @param output The OutputStream to which Prince will write the PDF output.
+     * @return true if a PDF file was generated successfully.
+     * @throws IOException If an I/O error occurs.
+     */
+    public boolean convertInputList(String inputListPath, OutputStream output) throws IOException {
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add(toCommand("input-list", inputListPath));
+        cmdLine.add(toCommand("output", "-"));
+
+        Process process = Util.invokeProcess(cmdLine);
+
+        try (InputStream fromPrince = process.getInputStream()) {
+            Util.copyInputToOutput(fromPrince, output);
+        }
+
+        return readMessagesFromStderr(process);
+    }
+
+    /**
      * Convert an XML or HTML string to a PDF file.
      * @param input The XML or HTML document in the form of a String.
      * @param outputPath The filename of the output PDF file.
@@ -298,6 +344,59 @@ public class Prince extends AbstractPrince {
         try (OutputStream toPrince = process.getOutputStream()) {
             Util.copyInputToOutput(input, toPrince);
         }
+
+        try (InputStream fromPrince = process.getInputStream()) {
+            Util.copyInputToOutput(fromPrince, output);
+        }
+
+        return readMessagesFromStderr(process);
+    }
+
+    /**
+     * Rasterize multiple XML or HTML files by reading an input list from a
+     * specified file. (An input list is a newline-separated sequence of file
+     * paths / URLs.)
+     * @param inputListPath The path to the input list file.
+     * @param outputPath A template string from which the raster files will be named
+     *                   (e.g. "page_%02d.png" will cause Prince to generate
+     *                   page_01.png, page_02.png, ..., page_10.png etc.).
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
+    public boolean rasterizeInputList(String inputListPath, String outputPath) throws IOException {
+        List<String> cmdLine = getJobCommandLine("normal");
+        cmdLine.add(toCommand("input-list", inputListPath));
+        cmdLine.add(toCommand("raster-output", outputPath));
+
+        Process process = Util.invokeProcess(cmdLine);
+
+        return readMessagesFromStderr(process);
+    }
+
+    /**
+     * Rasterize multiple XML or HTML files by reading an input list from a
+     * specified file. (An input list is a newline-separated sequence of file
+     * paths / URLs.) This method is useful for servlets as it allows Prince to
+     * write the raster output directly to the {@code OutputStream} of the
+     * servlet response.
+     * @param inputListPath The path to the input list file.
+     * @param output The OutputStream to which Prince will write the raster output.
+     * @return true if the input was successfully rasterized.
+     * @throws IOException If an I/O error occurs.
+     */
+    public boolean rasterizeInputList(String inputListPath, OutputStream output) throws IOException {
+        if (rasterPage < 1) {
+            throw new RuntimeException("rasterPage has to be set to a value > 0");
+        }
+        if (rasterFormat == null || rasterFormat == RasterFormat.AUTO) {
+            throw new RuntimeException("rasterFormat has to be set to JPEG or PNG");
+        }
+
+        List<String> cmdLine = getJobCommandLine("buffered");
+        cmdLine.add(toCommand("input-list", inputListPath));
+        cmdLine.add(toCommand("raster-output", "-"));
+
+        Process process = Util.invokeProcess(cmdLine);
 
         try (InputStream fromPrince = process.getInputStream()) {
             Util.copyInputToOutput(fromPrince, output);
