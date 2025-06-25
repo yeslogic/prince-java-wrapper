@@ -38,6 +38,7 @@ abstract class AbstractPrince {
     protected boolean iframes;
     protected boolean xInclude;
     protected boolean xmlExternalEntities;
+    protected boolean noLocalFiles;
 
     // Network options.
     private boolean noNetwork;
@@ -194,6 +195,8 @@ abstract class AbstractPrince {
         if (log != null) { cmdLine.add(toCommand("log", log)); }
         if (noWarnCssUnknown) { cmdLine.add(toCommand("no-warn-css-unknown")); }
         if (noWarnCssUnsupported) { cmdLine.add(toCommand("no-warn-css-unsupported")); }
+
+        if (noLocalFiles) { cmdLine.add(toCommand("no-local-files")); }
 
         if (noNetwork) { cmdLine.add(toCommand("no-network")); }
         if (noRedirects) { cmdLine.add(toCommand("no-redirects")); }
@@ -409,6 +412,14 @@ abstract class AbstractPrince {
      */
     public void setXmlExternalEntities(boolean xmlExternalEntities) {
         this.xmlExternalEntities = xmlExternalEntities;
+    }
+
+    /**
+     * Disable access to local files. Default value is {@code false}.
+     * @param noLocalFiles true to disable local files.
+     */
+    public void setNoLocalFiles(boolean noLocalFiles) {
+        this.noLocalFiles = noLocalFiles;
     }
     //endregion
 
