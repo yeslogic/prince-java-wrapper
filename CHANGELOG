@@ -1,0 +1,30 @@
+1.5.0 (2025-06-27)
+==================
+* Support --no-local-files in control interface (thanks @mash-erdene).
+
+1.4.0 (2025-06-18)
+==================
+* Fix encryption being non-optional in control interface (thanks @mash-erdene).
+* Add support for input lists.
+
+1.3.0 (2023-02-09)
+==================
+* Add support for:
+  - enabling HTML iframes.
+  - running an AcroJS script when opening a PDF.
+  - running an AcroJS script on a specific event.
+  - fail-safe options.
+* Slight improvements to events handling.
+
+1.2.0 (2022-01-31)
+==================
+* Add support for enabling PDF forms by default.
+
+1.1.0 (2021-10-01)
+==================
+* Prevent resource leaks by properly closing resources.
+* Support repeat keys when adding additional options.
+
+1.0.0 (2021-09-17)
+==================
+Initial release.
