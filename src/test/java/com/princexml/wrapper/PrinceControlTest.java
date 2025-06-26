@@ -163,4 +163,32 @@ class PrinceControlTest {
             }
         }
     }
+
+    @Nested
+    class StandaloneTests {
+        @Test
+        void testNoLocal() throws IOException {
+            PrinceEvents e = new PrinceEvents() {
+                @Override
+                public void onMessage(MessageType msgType, String msgLocation, String msgText) {
+                    assertEquals(MessageType.WRN, msgType);
+                    assertTrue(msgLocation.contains("convert-1.css"));
+                    assertEquals("not loading local file", msgText);
+                }
+
+                @Override
+                public void onDataMessage(String name, String value) {}
+            };
+            PrinceControl p = new PrinceControl(PRINCE_PATH, e);
+
+            p.setNoLocalFiles(true);
+            p.start();
+
+            try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "control-nolocal.pdf")) {
+                assertTrue(p.convert(RESOURCES_DIR + "convert-nolocal.html", fos));
+            } finally {
+                p.stop();
+            }
+        }
+    }
 }

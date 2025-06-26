@@ -220,6 +220,8 @@ class PrinceTest {
             p.setNoWarnCssUnknown(true);
             p.setNoWarnCssUnsupported(true);
 
+            p.setNoLocalFiles(true);
+
             p.setNoNetwork(true);
             p.setNoRedirects(true);
             p.setAuthUser("x");
@@ -272,7 +274,6 @@ class PrinceTest {
             p.setXInclude(true);
             p.setXmlExternalEntities(true);
             p.setIframes(true);
-            p.setNoLocalFiles(true);
 
             p.setJavaScript(true);
             p.addScript("x");
@@ -354,6 +355,29 @@ class PrinceTest {
             inputListFile.deleteOnExit();
 
             return inputListFile;
+        }
+    }
+
+    @Nested
+    class StandaloneTests {
+        @Test
+        void testNoLocal() throws IOException {
+            PrinceEvents e = new PrinceEvents() {
+                @Override
+                public void onMessage(MessageType msgType, String msgLocation, String msgText) {
+                    assertEquals(MessageType.WRN, msgType);
+                    assertTrue(msgLocation.contains("convert-1.css"));
+                    assertEquals("not loading local file", msgText);
+                }
+
+                @Override
+                public void onDataMessage(String name, String value) {}
+            };
+            Prince p = new Prince(PRINCE_PATH, e);
+            p.setNoLocalFiles(true);
+
+            boolean result = p.convert(RESOURCES_DIR + "convert-nolocal.html");
+            assertTrue(result);
         }
     }
 }
