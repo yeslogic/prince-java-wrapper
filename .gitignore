@@ -33,3 +33,5 @@ hs_err_pid*
 
 # Appears when running end-to-end tests. Known Java bug: https://bugs.openjdk.java.net/browse/JDK-8214300
 .attach_pid*
+
+.DS_Store
