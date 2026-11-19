@@ -1,6 +1,7 @@
 package com.princexml.wrapper;
 
-import com.princexml.wrapper.enums.*;
+import com.princexml.wrapper.enums.InputType;
+import com.princexml.wrapper.enums.RasterFormat;
 import com.princexml.wrapper.events.MessageType;
 import com.princexml.wrapper.events.PrinceEvents;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,11 +16,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// Note: running these tests creates an .attach_pid file in the project root.
-// Appears to be a known Java bug: https://bugs.openjdk.java.net/browse/JDK-8214300.
-@Disabled("Only used for end-to-end testing")
+@Disabled("for local testing")
 class PrinceTest {
     static class Events implements PrinceEvents {
         String message;
@@ -42,7 +42,8 @@ class PrinceTest {
 
     @Nested
     class InitialisedTests {
-        final String INPUT_PATH = RESOURCES_DIR + "convert-1.html";
+        final String INPUT_PATH1 = RESOURCES_DIR + "convert-1a.html";
+        final String INPUT_PATH2 = RESOURCES_DIR + "convert-1b.html";
 
         Prince p;
         Events e;
@@ -50,61 +51,138 @@ class PrinceTest {
         @BeforeEach
         void setUp() {
             e = new Events();
-            p = new Prince(PRINCE_PATH, e);
-
-            p.addStyleSheet(RESOURCES_DIR + "convert-1.css");
-            p.setJavaScript(true);
+            p = Prince.builder(PRINCE_PATH)
+                    .events(e)
+                    .failSafe(true)
+                    .noNetwork(true)
+                    .build();
         }
 
         @Test
         void testConvert1() throws IOException {
-            boolean result = p.convert(INPUT_PATH);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .convert(INPUT_PATH1);
             assertTrue(result, e.message);
         }
 
         @Test
         void testConvert2() throws IOException {
-            boolean result = p.convert(INPUT_PATH, RESOURCES_DIR + "convert-2.pdf");
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .convert(INPUT_PATH1, RESOURCES_DIR + "convert-2.pdf");
             assertTrue(result, e.message);
         }
 
         @Test
         void testConvert3() throws IOException {
-            List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-            boolean result = p.convert(inputPaths, RESOURCES_DIR + "convert-3.pdf");
+            List<String> inputPaths = Arrays.asList(INPUT_PATH1, INPUT_PATH2);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .convert(inputPaths, RESOURCES_DIR + "convert-3.pdf");
             assertTrue(result, e.message);
         }
 
         @Test
         void testConvert4() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-4.pdf")) {
-                assertTrue(p.convert(INPUT_PATH, fos), e.message);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .convert(INPUT_PATH1, fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testConvert5() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-5.pdf")) {
-                List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-                assertTrue(p.convert(inputPaths, fos), e.message);
+                List<String> inputPaths = Arrays.asList(INPUT_PATH1, INPUT_PATH2);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .convert(inputPaths, fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testConvert6() throws IOException {
-            try (FileInputStream fis = new FileInputStream(INPUT_PATH);
+            try (FileInputStream fis = new FileInputStream(INPUT_PATH1);
                  FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convert-6.pdf")
             ) {
-                p.setInputType(InputType.HTML);
-                assertTrue(p.convert(fis, fos), e.message);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .inputType(InputType.HTML)
+                        .convert(fis, fos);
+                assertTrue(result, e.message);
             }
+        }
+
+        @Test
+        void testConvertMultiple1() throws IOException {
+            boolean result1 = p.newJob()
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .convert(INPUT_PATH1, RESOURCES_DIR + "convert-mult1a.pdf");
+            assertTrue(result1, e.message);
+
+            boolean result2 = p.newJob()
+                    .javaScript(true)
+                    .convert(INPUT_PATH2, RESOURCES_DIR + "convert-mult1b.pdf");
+            assertTrue(result2, e.message);
+        }
+
+        @Test
+        void testConvertMultiple2() throws IOException {
+            Prince.Job job = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css");
+
+            boolean result1 = job
+                    .convert(INPUT_PATH1, RESOURCES_DIR + "convert-mult2a.pdf");
+            assertTrue(result1, e.message);
+
+            boolean result2 = job
+                    .convert(INPUT_PATH2, RESOURCES_DIR + "convert-mult2b.pdf");
+            assertTrue(result2, e.message);
+        }
+
+        @Test
+        void testConvertMultiple3() throws IOException {
+            Prince.Job job1 = p.newJob()
+                    .javaScript(true);
+            // job2's stylesheet shouldn't leak into job1.
+            Prince.Job job2 = p.newJob(job1)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css");
+            // job2's options should carry over into job3.
+            Prince.Job job3 = p.newJob(job2)
+                    .styleSheet(RESOURCES_DIR + "convert-1b.css");
+
+            boolean result1 = job1
+                    .convert(INPUT_PATH1, RESOURCES_DIR + "convert-mult3a.pdf");
+            assertTrue(result1, e.message);
+
+            boolean result2 = job2
+                    .convert(INPUT_PATH2, RESOURCES_DIR + "convert-mult3b.pdf");
+            assertTrue(result2, e.message);
+
+            boolean result3 = job3
+                    .convert(INPUT_PATH1, RESOURCES_DIR + "convert-mult3c.pdf");
+            assertTrue(result3, e.message);
         }
 
         @Test
         void testConvertInputList1() throws IOException {
             File inputListFile = createInputListFile();
-            boolean result = p.convertInputList(inputListFile.getAbsolutePath(),
-                    RESOURCES_DIR + "convertinputlist-1.pdf");
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .convertInputList(inputListFile.getAbsolutePath(),
+                            RESOURCES_DIR + "convertinputlist-1.pdf");
             assertTrue(result, e.message);
         }
 
@@ -112,244 +190,160 @@ class PrinceTest {
         void testConvertInputList2() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convertinputlist-2.pdf")) {
                 File inputListFile = createInputListFile();
-                p.setInputType(InputType.HTML);
-                assertTrue(p.convertInputList(inputListFile.getAbsolutePath(), fos), e.message);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .convertInputList(inputListFile.getAbsolutePath(), fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testConvertString1() throws IOException {
-            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
-            p.setInputType(InputType.HTML);
-            assertTrue(p.convertString(input, RESOURCES_DIR + "convertstring-1.pdf"), e.message);
+            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH1)), StandardCharsets.UTF_8);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .inputType(InputType.HTML)
+                    .convertString(input, RESOURCES_DIR + "convertstring-1.pdf");
+            assertTrue(result, e.message);
         }
 
         @Test
         void testConvertString2() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "convertstring-2.pdf")) {
-                String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
-                p.setInputType(InputType.HTML);
-                assertTrue(p.convertString(input, fos), e.message);
+                String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH1)), StandardCharsets.UTF_8);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .inputType(InputType.HTML)
+                        .convertString(input, fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testRasterize1() throws IOException {
-            assertTrue(p.rasterize(INPUT_PATH, RESOURCES_DIR + "rasterize-1-page%d.png"), e.message);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .rasterize(INPUT_PATH1, RESOURCES_DIR + "rasterize-1-page%d.png");
+            assertTrue(result, e.message);
         }
 
         @Test
         void testRasterize2() throws IOException {
-            List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-            assertTrue(p.rasterize(inputPaths, RESOURCES_DIR + "rasterize-2-page%d.png"), e.message);
+            List<String> inputPaths = Arrays.asList(INPUT_PATH1, INPUT_PATH2);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .rasterize(inputPaths, RESOURCES_DIR + "rasterize-2-page%d.png");
+            assertTrue(result, e.message);
         }
 
         @Test
         void testRasterize3() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-3.png")) {
-                p.setRasterPage(1);
-                p.setRasterFormat(RasterFormat.PNG);
-                assertTrue(p.rasterize(INPUT_PATH, fos), e.message);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .rasterPage(1)
+                        .rasterFormat(RasterFormat.PNG)
+                        .rasterize(INPUT_PATH1, fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testRasterize4() throws IOException {
-            try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-4.png")) {
-                List<String> inputPaths = Arrays.asList(INPUT_PATH, INPUT_PATH);
-                p.setRasterPage(2);
-                p.setRasterFormat(RasterFormat.PNG);
-                assertTrue(p.rasterize(inputPaths, fos), e.message);
+            try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-4.jpeg")) {
+                List<String> inputPaths = Arrays.asList(INPUT_PATH1, INPUT_PATH2);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .rasterPage(2)
+                        .rasterFormat(RasterFormat.JPEG)
+                        .rasterize(inputPaths, fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testRasterize5() throws IOException {
-            try (FileInputStream fis = new FileInputStream(INPUT_PATH);
-                 FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-5.png")
+            try (FileInputStream fis = new FileInputStream(INPUT_PATH2);
+                 FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterize-5.jpeg")
             ) {
-                p.setInputType(InputType.HTML);
-                p.setRasterPage(1);
-                p.setRasterFormat(RasterFormat.PNG);
-                assertTrue(p.rasterize(fis, fos), e.message);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .inputType(InputType.HTML)
+                        .rasterPage(1)
+                        .rasterFormat(RasterFormat.JPEG)
+                        .rasterize(fis, fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testRasterizeInputList1() throws IOException {
             File inputListFile = createInputListFile();
-            assertTrue(p.rasterizeInputList(inputListFile.getAbsolutePath(), RESOURCES_DIR +
-                    "rasterizeinputlist-1-page%d.png"), e.message);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .rasterizeInputList(inputListFile.getAbsolutePath(), RESOURCES_DIR +
+                                    "rasterizeinputlist-1-page%d.png");
+            assertTrue(result, e.message);
         }
 
         @Test
         void testRasterizeInputList2() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterizeinputlist-2.png")) {
                 File inputListFile = createInputListFile();
-                p.setInputType(InputType.HTML);
-                p.setRasterPage(2);
-                p.setRasterFormat(RasterFormat.PNG);
-                assertTrue(p.rasterizeInputList(inputListFile.getAbsolutePath(), fos), e.message);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .inputType(InputType.HTML)
+                        .rasterPage(2)
+                        .rasterFormat(RasterFormat.PNG)
+                        .rasterizeInputList(inputListFile.getAbsolutePath(), fos);
+                assertTrue(result, e.message);
             }
         }
 
         @Test
         void testRasterizeString1() throws IOException {
-            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
-            p.setInputType(InputType.HTML);
-            assertTrue(p.rasterizeString(input, RESOURCES_DIR + "rasterizestring-1-page%d.png"), e.message);
+            String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH1)),
+                    StandardCharsets.UTF_8);
+            boolean result = p.newJob()
+                    .javaScript(true)
+                    .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                    .inputType(InputType.HTML)
+                    .rasterizeString(input, RESOURCES_DIR + "rasterizestring-1-page%d.png");
+            assertTrue(result, e.message);
         }
 
         @Test
         void testRasterizeString2() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(RESOURCES_DIR + "rasterizestring-2.png")) {
-                String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH)), StandardCharsets.UTF_8);
-                p.setInputType(InputType.HTML);
-                p.setRasterPage(1);
-                p.setRasterFormat(RasterFormat.PNG);
-                assertTrue(p.rasterizeString(input, fos), e.message);
-            }
-        }
-
-        @Test
-        void testBaseOptionKeys() throws IOException {
-            p.setVerbose(true);
-            p.setDebug(true);
-            // Creates a log file in project root.
-            // p.setLog("x");
-            p.setNoWarnCssUnknown(true);
-            p.setNoWarnCssUnsupported(true);
-
-            p.setNoLocalFiles(true);
-
-            p.setNoNetwork(true);
-            p.setNoRedirects(true);
-            p.setAuthUser("x");
-            p.setAuthPassword("x");
-            p.setAuthServer("x");
-            p.setAuthScheme(AuthScheme.HTTPS);
-            p.addAuthMethod(AuthMethod.BASIC);
-            p.addAuthMethod(AuthMethod.DIGEST);
-            p.setNoAuthPreemptive(true);
-            p.setHttpProxy("x");
-            p.setHttpTimeout(100);
-            p.addCookie("x");
-            p.addCookie("y");
-            p.setCookieJar("x");
-            p.setSslCaCert("x");
-            p.setSslCaPath("x");
-            p.setSslCert("x");
-            p.setSslCertType(SslType.DER);
-            p.setSslKey("x");
-            p.setSslKeyType(SslType.PEM);
-            p.setSslKeyPassword("x");
-            p.setSslVersion(SslVersion.TLSV1_3);
-            p.setInsecure(true);
-            p.setNoParallelDownloads(true);
-
-            p.setLicenseFile("x");
-            p.setLicenseKey("x");
-
-            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
-                assertTrue(p.convert(INPUT_PATH, os), e.message);
-            }
-        }
-
-        @Test
-        void testFailSafe() throws IOException {
-            p.setFailSafe(true);
-
-            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
-                assertTrue(p.convert(INPUT_PATH, os), e.message);
-            }
-        }
-
-        // Check keys.
-        @Test
-        void testJobOptionKeys() throws IOException {
-            p.setInputType(InputType.HTML);
-            p.setBaseUrl(".");
-            p.addRemap("x", "y");
-            p.addRemap("i", "j");
-            p.setXInclude(true);
-            p.setXmlExternalEntities(true);
-            p.setIframes(true);
-
-            p.setJavaScript(true);
-            p.addScript("x");
-            p.addScript("y");
-            p.setMaxPasses(5);
-
-            p.addStyleSheet("x");
-            p.addStyleSheet("y");
-            p.setMedia("x");
-            p.setPageSize("x");
-            p.setPageMargin("x");
-            p.setNoAuthorStyle(true);
-            p.setNoDefaultStyle(true);
-
-            p.setPdfId("x");
-            p.setPdfLang("x");
-            p.setPdfProfile(PdfProfile.PDFA_1A);
-            p.setPdfOutputIntent("x");
-            p.setPdfScript("x");
-            p.addPdfEventScript(PdfEvent.WILL_PRINT, "w");
-            p.clearPdfEventScripts();
-            p.addPdfEventScript(PdfEvent.WILL_CLOSE, "x");
-            p.addPdfEventScript(PdfEvent.WILL_CLOSE, "y");
-            p.addPdfEventScript(PdfEvent.DID_PRINT, "z");
-            p.addFileAttachment("x");
-            p.addFileAttachment("y");
-            p.setNoArtificialFonts(true);
-            p.setNoEmbedFonts(true);
-            p.setNoSubsetFonts(true);
-            // Fails conversion if enabled, due to being unable to find any fonts.
-            // p.setNoSystemFonts(true);
-            p.setForceIdentityEncoding(true);
-            p.setNoCompress(true);
-            p.setNoObjectStreams(true);
-            p.setConvertColors(true);
-            p.setFallbackCmykProfile("x");
-            p.setTaggedPdf(true);
-            p.setPdfForms(true);
-            p.setCssDpi(100);
-
-            p.setPdfTitle("x");
-            p.setPdfSubject("x");
-            p.setPdfAuthor("x");
-            p.setPdfKeywords("x");
-            p.setPdfCreator("x");
-            p.setXmp("x");
-
-            p.setEncrypt(true);
-            p.setKeyBits(KeyBits.BITS40);
-            p.setUserPassword("x");
-            p.setOwnerPassword("x");
-            p.setDisallowPrint(true);
-            p.setDisallowCopy(true);
-            p.setAllowCopyForAccessibility(true);
-            p.setDisallowAnnotate(true);
-            p.setDisallowModify(true);
-            p.setAllowAssembly(true);
-
-            p.setRasterFormat(RasterFormat.JPEG);
-            p.setRasterJpegQuality(100);
-            p.setRasterPage(100);
-            p.setRasterDpi(100);
-            p.setRasterThreads(100);
-            p.setRasterBackground(RasterBackground.WHITE);
-
-            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) { // Doesn't matter.
-                assertTrue(p.convert(INPUT_PATH, os), e.message);
+                String input = new String(Files.readAllBytes(Paths.get(INPUT_PATH2)),
+                        StandardCharsets.UTF_8);
+                boolean result = p.newJob()
+                        .javaScript(true)
+                        .styleSheet(RESOURCES_DIR + "convert-1a.css")
+                        .inputType(InputType.HTML)
+                        .rasterPage(1)
+                        .rasterFormat(RasterFormat.PNG)
+                        .rasterizeString(input, fos);
+                assertTrue(result, e.message);
             }
         }
 
         File createInputListFile() throws IOException {
             File inputListFile = File.createTempFile("input-list", ".txt");
             BufferedWriter bw = new BufferedWriter(new FileWriter(inputListFile));
-            bw.write(INPUT_PATH);
+            bw.write(INPUT_PATH1);
             bw.newLine();
-            bw.write(INPUT_PATH);
+            bw.write(INPUT_PATH2);
             bw.newLine();
             bw.close();
             inputListFile.deleteOnExit();
@@ -366,17 +360,21 @@ class PrinceTest {
                 @Override
                 public void onMessage(MessageType msgType, String msgLocation, String msgText) {
                     assertEquals(MessageType.WRN, msgType);
-                    assertTrue(msgLocation.contains("convert-1.css"));
+                    assertTrue(msgLocation.contains("convert-1a.css"));
                     assertEquals("not loading local file", msgText);
                 }
 
                 @Override
                 public void onDataMessage(String name, String value) {}
             };
-            Prince p = new Prince(PRINCE_PATH, e);
-            p.setNoLocalFiles(true);
 
-            boolean result = p.convert(RESOURCES_DIR + "convert-nolocal.html");
+            Prince p = Prince.builder(PRINCE_PATH)
+                    .events(e)
+                    .noLocalFiles(true)
+                    .build();
+
+            boolean result = p.newJob()
+                    .convert(RESOURCES_DIR + "convert-nolocal.html");
             assertTrue(result);
         }
     }

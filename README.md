@@ -2,6 +2,57 @@
 
 This library contains class files that provide a Java interface to [Prince][1].
 
+## Examples
+
+Using the default Prince interface:
+
+```java
+import com.princexml.wrapper.Prince;
+
+public static void main(String[] args) {
+    // Configure and build Prince:
+    Prince p = Prince.builder("path/to/prince")
+            .verbose(true)
+            .licenseFile("path/to/license")
+            .build();
+
+    // Execute a job:
+    boolean result = p.newJob()
+            .javaScript(true)
+            .script("path/to/script")
+            .styleSheet("path/to/stylesheet")
+            .convert("input", "output");
+}
+```
+
+Using the Prince control interface:
+
+```java
+import com.princexml.wrapper.PrinceControl;
+
+import java.io.FileOutputStream;
+
+public static void main(String[] args) {
+    // Configure and start the PrinceControl process:
+    PrinceControl p = PrinceControl.builder("path/to/prince")
+            .verbose(true)
+            .licenseFile("path/to/license")
+            .start();
+
+    // Execute a job:
+    try (FileOutputStream fos = new FileOutputStream("output.pdf")) {
+        boolean result = p.newJob()
+                .javaScript(true)
+                .script("path/to/script")
+                .styleSheet("path/to/stylesheet")
+                .convert("input", fos);
+    }
+
+    // Stop the PrinceControl process:
+    p.stop();
+}
+```
+
 ## Documentation
 
 Documentation for the current version can be found [here][2]. To access the
