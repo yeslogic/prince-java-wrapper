@@ -412,7 +412,7 @@ public class Prince extends PrinceBase {
         }
 
         /**
-         * Finalize the {@link #Prince} object.
+         * Finalize the {@link com.princexml.wrapper.Prince} object.
          */
         public Prince build() {
             return new Prince(this);

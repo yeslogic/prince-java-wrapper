@@ -11,6 +11,7 @@ import com.princexml.wrapper.enums.PdfEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.princexml.wrapper.CommandLine.toCommand;
@@ -77,13 +78,13 @@ public class PrinceControl extends PrinceBase {
         return version;
     }
 
-    private String buildJson(Job j) {
+    private String buildJson(List<String> inputPaths, Job j) {
         Json json = new Json();
         json.beginObj();
 
         json.beginObj("input");
             json.beginList("src");
-                j.inputPaths.forEach(json::value);
+                inputPaths.forEach(json::value);
             json.endList();
 
             if (j.inputType != null) { json.field("type", j.inputType.toString()); }
@@ -181,43 +182,12 @@ public class PrinceControl extends PrinceBase {
     }
 
     private boolean convert(String inputPath, OutputStream output, Job job) throws IOException {
-        // XXX We're mutating a copy of `job`, but ideally we should avoid this.
-        job.inputPaths.add(inputPath);
-        return convert(output, job);
+        List<String> inputPaths = Collections.singletonList(inputPath);
+        return convert(inputPaths, output, job);
     }
 
     private boolean convert(List<String> inputPaths, OutputStream output, Job job)
             throws IOException {
-        // XXX We're mutating a copy of `job`, but ideally we should avoid this.
-        job.inputPaths.addAll(inputPaths);
-        return convert(output, job);
-    }
-
-    private boolean convert(InputStream input, OutputStream output, Job job) throws IOException {
-        if (job.inputType == null || job.inputType == InputType.AUTO) {
-            throw new RuntimeException("inputType has to be set to XML or HTML");
-        }
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Util.copyInputToOutput(input, baos);
-            // XXX We're mutating a copy of `job`, but ideally we should avoid this.
-            job.addResource(baos.toByteArray());
-        }
-
-        return convert(output, job);
-    }
-
-    private boolean convertString(String input, OutputStream output, Job job) throws IOException {
-        if (job.inputType == null || job.inputType == InputType.AUTO) {
-            throw new RuntimeException("inputType has to be set to XML or HTML");
-        }
-
-        // XXX We're mutating a copy of `job`, but ideally we should avoid this.
-        job.addResource(input.getBytes(StandardCharsets.UTF_8));
-        return convert(output, job);
-    }
-
-    private boolean convert(OutputStream output, Job job) throws IOException {
         if (process == null) {
             throw new RuntimeException("control process has not been started");
         }
@@ -226,7 +196,7 @@ public class PrinceControl extends PrinceBase {
         OutputStream toPrince = process.getOutputStream();
         InputStream fromPrince = process.getInputStream();
 
-        Chunk.writeChunk(toPrince, "job", buildJson(job));
+        Chunk.writeChunk(toPrince, "job", buildJson(inputPaths, job));
         for (byte[] r : job.resources) {
             Chunk.writeChunk(toPrince, "dat", r);
         }
@@ -248,6 +218,31 @@ public class PrinceControl extends PrinceBase {
         } else {
             throw new IOException("unknown chunk: " + chunk.getTag());
         }
+    }
+
+    private boolean convert(InputStream input, OutputStream output, Job job) throws IOException {
+        if (job.inputType == null || job.inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Util.copyInputToOutput(input, baos);
+            job.resources.add(baos.toByteArray()); // XXX Mutates a copy of `job`.
+            List<String> inputPaths =
+                    Collections.singletonList("job-resource:" + (job.resources.size() - 1));
+            return convert(inputPaths, output, job);
+        }
+    }
+
+    private boolean convertString(String input, OutputStream output, Job job) throws IOException {
+        if (job.inputType == null || job.inputType == InputType.AUTO) {
+            throw new RuntimeException("inputType has to be set to XML or HTML");
+        }
+
+        job.resources.add(input.getBytes(StandardCharsets.UTF_8)); // XXX Mutates a copy of `job`.
+        List<String> inputPaths =
+                Collections.singletonList("job-resource:" + (job.resources.size() - 1));
+        return convert(inputPaths, output, job);
     }
 
     private void start() throws IOException {
@@ -274,9 +269,6 @@ public class PrinceControl extends PrinceBase {
     }
 
     public static class Builder extends PrinceBase.Builder<Builder> {
-        private final List<String> inputPaths = new ArrayList<>();
-        private final List<byte[]> resources = new ArrayList<>();
-
         private Builder(String princePath) {
             super(princePath);
         }
@@ -298,7 +290,6 @@ public class PrinceControl extends PrinceBase {
     public static class Job extends PrinceBase.Job<Job> {
         private final PrinceControl control;
 
-        private final List<String> inputPaths = new ArrayList<>();
         private final List<byte[]> resources = new ArrayList<>();
 
         private Job(PrinceControl control) {
@@ -310,10 +301,7 @@ public class PrinceControl extends PrinceBase {
             super(job);
             this.control = job.control;
 
-            this.inputPaths.addAll(job.inputPaths);
-            for (byte[] bytes : job.resources) {
-                this.resources.add(bytes.clone());
-            }
+            this.resources.addAll(job.resources);
         }
 
         /**
@@ -428,11 +416,6 @@ public class PrinceControl extends PrinceBase {
          */
         public boolean convertString(String input, OutputStream output) throws IOException {
             return control.convertString(input, output, new Job(this));
-        }
-
-        private void addResource(byte[] resource) {
-            this.resources.add(resource);
-            this.inputPaths.add("job-resource:" + (this.resources.size() - 1));
         }
     }
 }
